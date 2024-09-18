@@ -1,0 +1,1231 @@
+basePath: /api
+definitions:
+  dto.Pagination:
+    properties:
+      current_page:
+        type: integer
+      page_count:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.Token:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  model.Category:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      slug:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Permission:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      slug:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Question:
+    properties:
+      category_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      text:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Role:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      permission_ids:
+        items:
+          type: string
+        type: array
+      slug:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      role_ids:
+        items:
+          type: string
+        type: array
+      updated_at:
+        type: string
+    type: object
+  request.CategoryCreate:
+    properties:
+      description:
+        maxLength: 500
+        minLength: 5
+        type: string
+      name:
+        maxLength: 50
+        minLength: 1
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  request.CategoryUpdate:
+    properties:
+      description:
+        maxLength: 500
+        minLength: 5
+        type: string
+      name:
+        maxLength: 50
+        minLength: 1
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  request.Login:
+    properties:
+      email:
+        maxLength: 50
+        type: string
+      password:
+        maxLength: 50
+        minLength: 8
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  request.PermissionCreate:
+    properties:
+      name:
+        maxLength: 50
+        minLength: 5
+        type: string
+    required:
+    - name
+    type: object
+  request.PermissionUpdate:
+    properties:
+      name:
+        maxLength: 50
+        minLength: 5
+        type: string
+    required:
+    - name
+    type: object
+  request.QuestionCreate:
+    properties:
+      category_id:
+        type: string
+      text:
+        maxLength: 200
+        minLength: 3
+        type: string
+    required:
+    - category_id
+    - text
+    type: object
+  request.QuestionUpdate:
+    properties:
+      text:
+        maxLength: 200
+        minLength: 3
+        type: string
+    required:
+    - text
+    type: object
+  request.Refresh:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    required:
+    - access_token
+    - refresh_token
+    type: object
+  request.RoleCreate:
+    properties:
+      name:
+        maxLength: 50
+        minLength: 5
+        type: string
+    required:
+    - name
+    type: object
+  request.RoleUpdate:
+    properties:
+      name:
+        maxLength: 50
+        minLength: 5
+        type: string
+    required:
+    - name
+    type: object
+  request.UserCreate:
+    properties:
+      email:
+        maxLength: 50
+        type: string
+      name:
+        maxLength: 50
+        type: string
+      password:
+        maxLength: 50
+        minLength: 8
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  request.UserUpdate:
+    properties:
+      name:
+        maxLength: 50
+        type: string
+    required:
+    - name
+    type: object
+  response.list:
+    properties:
+      data: {}
+      pagination: {}
+    type: object
+  response.success:
+    properties:
+      data: {}
+    type: object
+info:
+  contact: {}
+  title: tech_check http api
+  version: "1.0"
+paths:
+  /v1/auth:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: get auth user
+      tags:
+      - auth
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: login request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.Token'
+              type: object
+      summary: login
+      tags:
+      - auth
+  /v1/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: token refresh request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.Refresh'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.Token'
+              type: object
+      summary: refresh token
+      tags:
+      - auth
+  /v1/categories:
+    get:
+      parameters:
+      - description: page
+        in: query
+        name: pagination[page]
+        type: integer
+      - description: count
+        in: query
+        name: pagination[count]
+        type: integer
+      - description: created_at
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[created_at]
+        type: string
+      - description: updated_at
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[updated_at]
+        type: string
+      - description: name
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[name]
+        type: string
+      - description: slug
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[slug]
+        type: string
+      - description: name
+        in: query
+        name: filters[name]
+        type: string
+      - description: slug
+        in: query
+        name: filters[slug]
+        type: string
+      - description: description
+        in: query
+        name: filters[description]
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.list'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Category'
+                  type: array
+                pagination:
+                  $ref: '#/definitions/dto.Pagination'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: categories list
+      tags:
+      - categories
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: category create request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.CategoryCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Category'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: create category
+      tags:
+      - categories
+  /v1/categories/{id}:
+    delete:
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: delete category by id
+      tags:
+      - categories
+    get:
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Category'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: get category by id
+      tags:
+      - categories
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: category update request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.CategoryUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Category'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: update profile
+      tags:
+      - categories
+  /v1/permissions:
+    get:
+      parameters:
+      - description: page
+        in: query
+        name: pagination[page]
+        type: integer
+      - description: count
+        in: query
+        name: pagination[count]
+        type: integer
+      - description: created_at
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[created_at]
+        type: string
+      - description: updated_at
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[updated_at]
+        type: string
+      - description: name
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[name]
+        type: string
+      - description: slug
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[slug]
+        type: string
+      - description: name
+        in: query
+        name: filters[name]
+        type: string
+      - description: slug
+        in: query
+        name: filters[slug]
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.list'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Permission'
+                  type: array
+                pagination:
+                  $ref: '#/definitions/dto.Pagination'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: permissions list
+      tags:
+      - permissions
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: permission create request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.PermissionCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Permission'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: create permission
+      tags:
+      - permissions
+  /v1/permissions/{id}:
+    delete:
+      parameters:
+      - description: permission id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: delete permission by id
+      tags:
+      - permissions
+    get:
+      parameters:
+      - description: permission id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Permission'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: get permission by id
+      tags:
+      - permissions
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: permission id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: permission update request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.PermissionUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Permission'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: update permission by id
+      tags:
+      - permissions
+  /v1/questions:
+    get:
+      parameters:
+      - description: page
+        in: query
+        name: pagination[page]
+        type: integer
+      - description: count
+        in: query
+        name: pagination[count]
+        type: integer
+      - description: created_at
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[created_at]
+        type: string
+      - description: updated_at
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[updated_at]
+        type: string
+      - description: text
+        in: query
+        name: filters[text]
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.list'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Question'
+                  type: array
+                pagination:
+                  $ref: '#/definitions/dto.Pagination'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: questions list
+      tags:
+      - questions
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: question create request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.QuestionCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Question'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: create question
+      tags:
+      - questions
+  /v1/questions/{id}:
+    delete:
+      parameters:
+      - description: question id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: delete question by id
+      tags:
+      - questions
+    get:
+      parameters:
+      - description: question id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Question'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: get question by id
+      tags:
+      - questions
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: question id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: question update request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.QuestionUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Question'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: update profile
+      tags:
+      - questions
+  /v1/roles:
+    get:
+      parameters:
+      - description: page
+        in: query
+        name: pagination[page]
+        type: integer
+      - description: count
+        in: query
+        name: pagination[count]
+        type: integer
+      - description: created_at
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[created_at]
+        type: string
+      - description: updated_at
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[updated_at]
+        type: string
+      - description: name
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[name]
+        type: string
+      - description: slug
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[slug]
+        type: string
+      - description: name
+        in: query
+        name: filters[name]
+        type: string
+      - description: slug
+        in: query
+        name: filters[slug]
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.list'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Role'
+                  type: array
+                pagination:
+                  $ref: '#/definitions/dto.Pagination'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: roles list
+      tags:
+      - roles
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: role create request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.RoleCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Role'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: create role
+      tags:
+      - roles
+  /v1/roles/{id}:
+    delete:
+      parameters:
+      - description: role id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: delete role by id
+      tags:
+      - roles
+    get:
+      parameters:
+      - description: role id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Role'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: get role by id
+      tags:
+      - roles
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: role id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: role update request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.RoleUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Role'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: update role by id
+      tags:
+      - roles
+  /v1/roles/{id}/permissions/{permissionID}:
+    delete:
+      parameters:
+      - description: role id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: permission id
+        in: path
+        name: permissionID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Role'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: remove permission
+      tags:
+      - roles
+    post:
+      parameters:
+      - description: role id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: permission id
+        in: path
+        name: permissionID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Role'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: add permission
+      tags:
+      - roles
+  /v1/users:
+    get:
+      parameters:
+      - description: page
+        in: query
+        name: pagination[page]
+        type: integer
+      - description: count
+        in: query
+        name: pagination[count]
+        type: integer
+      - description: created_at
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[created_at]
+        type: string
+      - description: updated_at
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sorts[updated_at]
+        type: string
+      - description: name
+        in: query
+        name: filters[name]
+        type: string
+      - description: email
+        in: query
+        name: filters[email]
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.list'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.User'
+                  type: array
+                pagination:
+                  $ref: '#/definitions/dto.Pagination'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: users list
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: user create request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.UserCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      summary: registration
+      tags:
+      - users
+  /v1/users/{id}:
+    delete:
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: delete user by id
+      tags:
+      - users
+    get:
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: get user by id
+      tags:
+      - users
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: user update request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.UserUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: update profile
+      tags:
+      - users
+  /v1/users/{id}/roles/{roleID}:
+    delete:
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: role id
+        in: path
+        name: roleID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: remove role
+      tags:
+      - users
+    post:
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: role id
+        in: path
+        name: roleID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: add role
+      tags:
+      - users
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

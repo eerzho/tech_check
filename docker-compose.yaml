@@ -1,0 +1,38 @@
+services:
+
+  http:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    container_name: ${PROJECT_NAME}_http
+    env_file:
+      - .env
+    ports:
+      - "${HTTP_PORT}:${HTTP_PORT}"
+    volumes:
+      - .:/http
+    networks:
+      - main
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:7.0
+    container_name: ${PROJECT_NAME}_mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    ports:
+      - "${MONGO_PORT}:${MONGO_PORT}"
+    command: mongod --port ${MONGO_PORT}
+    volumes:
+      - mongo:/data/db
+    networks:
+      - main
+
+volumes:
+  mongo:
+  http:
+
+networks:
+  main:
