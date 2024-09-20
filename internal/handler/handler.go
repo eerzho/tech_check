@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/rs/cors"
 	"net/http"
 	_ "tech_check/docs"
 	"tech_check/internal/app"
@@ -23,5 +24,11 @@ func New(app *app.App) http.Handler {
 
 	handler := v1.New(mux, app, "/api/v1")
 
-	return handler
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders: []string{"*"},
+	})
+
+	return c.Handler(handler)
 }
