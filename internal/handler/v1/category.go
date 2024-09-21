@@ -14,20 +14,18 @@ type category struct {
 
 func newCategory(
 	mux *http.ServeMux,
-	prefix string,
 	authMwr *mwr.Auth,
 	categorySrvc CategorySrvc,
 ) {
-	prefix += "/categories"
 	c := category{
 		categorySrvc: categorySrvc,
 	}
 
-	mux.HandleFunc("GET "+prefix, authMwr.MwrFunc(c.list))
-	mux.HandleFunc("POST "+prefix, authMwr.MwrFunc(c.create))
-	mux.HandleFunc("GET "+prefix+"/{id}", authMwr.MwrFunc(c.show))
-	mux.HandleFunc("PATCH "+prefix+"/{id}", authMwr.MwrFunc(c.update))
-	mux.HandleFunc("DELETE "+prefix+"/{id}", authMwr.MwrFunc(c.delete))
+	mux.HandleFunc(Url(http.MethodGet, "/categories"), authMwr.MwrFunc(c.list))
+	mux.HandleFunc(Url(http.MethodPost, "/categories"), authMwr.MwrFunc(c.create))
+	mux.HandleFunc(Url(http.MethodGet, "/categories/{id}"), authMwr.MwrFunc(c.show))
+	mux.HandleFunc(Url(http.MethodPatch, "/categories/{id}"), authMwr.MwrFunc(c.update))
+	mux.HandleFunc(Url(http.MethodDelete, "/categories/{id}"), authMwr.MwrFunc(c.delete))
 }
 
 // @Summary categories list

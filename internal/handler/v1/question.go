@@ -14,20 +14,18 @@ type question struct {
 
 func newQuestion(
 	mux *http.ServeMux,
-	prefix string,
 	authMwr *mwr.Auth,
 	questionSrvc QuestionSrvc,
 ) {
-	prefix += "/questions"
 	q := question{
 		questionSrvc: questionSrvc,
 	}
 
-	mux.HandleFunc("GET "+prefix, authMwr.MwrFunc(q.list))
-	mux.HandleFunc("POST "+prefix, authMwr.MwrFunc(q.create))
-	mux.HandleFunc("GET "+prefix+"/{id}", authMwr.MwrFunc(q.show))
-	mux.HandleFunc("PATCH "+prefix+"/{id}", authMwr.MwrFunc(q.update))
-	mux.HandleFunc("DELETE "+prefix+"/{id}", authMwr.MwrFunc(q.delete))
+	mux.HandleFunc(Url(http.MethodGet, "/questions"), authMwr.MwrFunc(q.list))
+	mux.HandleFunc(Url(http.MethodPost, "/questions"), authMwr.MwrFunc(q.create))
+	mux.HandleFunc(Url(http.MethodGet, "/questions/{id}"), authMwr.MwrFunc(q.show))
+	mux.HandleFunc(Url(http.MethodPatch, "/questions/{id}"), authMwr.MwrFunc(q.update))
+	mux.HandleFunc(Url(http.MethodDelete, "/questions/{id}"), authMwr.MwrFunc(q.delete))
 }
 
 // @Summary questions list

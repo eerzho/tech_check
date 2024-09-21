@@ -1,11 +1,12 @@
 package handler
 
 import (
-	"github.com/rs/cors"
 	"net/http"
 	_ "tech_check/docs"
 	"tech_check/internal/app"
 	v1 "tech_check/internal/handler/v1"
+
+	"github.com/rs/cors"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 )
@@ -22,7 +23,7 @@ func New(app *app.App) http.Handler {
 	// handler
 	mux.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 
-	handler := v1.New(mux, app, "/api/v1")
+	handler := v1.New(mux, app)
 
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},

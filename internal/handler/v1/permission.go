@@ -14,20 +14,18 @@ type permission struct {
 
 func newPermission(
 	mux *http.ServeMux,
-	prefix string,
 	authMwr *mwr.Auth,
 	permissionSrvc PermissionSrvc,
 ) {
-	prefix += "/permissions"
 	p := permission{
 		permissionSrvc: permissionSrvc,
 	}
 
-	mux.HandleFunc("GET "+prefix, authMwr.MwrFunc(p.list))
-	mux.HandleFunc("POST "+prefix, authMwr.MwrFunc(p.create))
-	mux.HandleFunc("GET "+prefix+"/{id}", authMwr.MwrFunc(p.show))
-	mux.HandleFunc("PATCH "+prefix+"/{id}", authMwr.MwrFunc(p.update))
-	mux.HandleFunc("DELETE "+prefix+"/{id}", authMwr.MwrFunc(p.delete))
+	mux.HandleFunc(Url(http.MethodGet, "/permissions"), authMwr.MwrFunc(p.list))
+	mux.HandleFunc(Url(http.MethodPost, "/permissions"), authMwr.MwrFunc(p.create))
+	mux.HandleFunc(Url(http.MethodGet, "/permissions/{id}"), authMwr.MwrFunc(p.show))
+	mux.HandleFunc(Url(http.MethodPatch, "/permissions/{id}"), authMwr.MwrFunc(p.update))
+	mux.HandleFunc(Url(http.MethodDelete, "/permissions/{id}"), authMwr.MwrFunc(p.delete))
 }
 
 // @Summary permissions list

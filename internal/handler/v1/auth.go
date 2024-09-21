@@ -14,19 +14,17 @@ type auth struct {
 
 func newAuth(
 	mux *http.ServeMux,
-	prefix string,
 	authMwr *mwr.Auth,
 	authSrvc AuthSrvc,
 ) {
-	prefix += "/auth"
 	a := auth{
 		authSrvc: authSrvc,
 	}
 
-	mux.HandleFunc("POST "+prefix, a.login)
-	mux.HandleFunc("POST "+prefix+"/google", a.googleLogin)
-	mux.HandleFunc("GET "+prefix, authMwr.MwrFunc(a.me))
-	mux.HandleFunc("POST "+prefix+"/refresh", a.refresh)
+	mux.HandleFunc(Url(http.MethodPost, "/auth"), a.login)
+	mux.HandleFunc(Url(http.MethodPost, "/auth/google"), a.googleLogin)
+	mux.HandleFunc(Url(http.MethodGet, "/auth"), authMwr.MwrFunc(a.me))
+	mux.HandleFunc(Url(http.MethodPost, "/auth/refresh"), a.refresh)
 }
 
 // @Summary login

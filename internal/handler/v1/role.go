@@ -14,22 +14,20 @@ type role struct {
 
 func newRole(
 	mux *http.ServeMux,
-	prefix string,
 	authMwr *mwr.Auth,
 	roleSrvc RoleSrvc,
 ) {
-	prefix += "/roles"
 	re := role{
 		roleSrvc: roleSrvc,
 	}
 
-	mux.HandleFunc("GET "+prefix, authMwr.MwrFunc(re.list))
-	mux.HandleFunc("POST "+prefix, authMwr.MwrFunc(re.create))
-	mux.HandleFunc("GET "+prefix+"/{id}", authMwr.MwrFunc(re.show))
-	mux.HandleFunc("PATCH "+prefix+"/{id}", authMwr.MwrFunc(re.update))
-	mux.HandleFunc("DELETE "+prefix+"/{id}", authMwr.MwrFunc(re.delete))
-	mux.HandleFunc("POST "+prefix+"/{id}/permissions/{permissionID}", authMwr.MwrFunc(re.addPermission))
-	mux.HandleFunc("DELETE "+prefix+"/{id}/permissions/{permissionID}", authMwr.MwrFunc(re.removePermission))
+	mux.HandleFunc(Url(http.MethodGet, "/roles"), authMwr.MwrFunc(re.list))
+	mux.HandleFunc(Url(http.MethodPost, "/roles"), authMwr.MwrFunc(re.create))
+	mux.HandleFunc(Url(http.MethodGet, "/roles/{id}"), authMwr.MwrFunc(re.show))
+	mux.HandleFunc(Url(http.MethodPatch, "/roles/{id}"), authMwr.MwrFunc(re.update))
+	mux.HandleFunc(Url(http.MethodDelete, "/roles/{id}"), authMwr.MwrFunc(re.delete))
+	mux.HandleFunc(Url(http.MethodPost, "/roles/{id}/permissions/{permissionID}"), authMwr.MwrFunc(re.addPermission))
+	mux.HandleFunc(Url(http.MethodDelete, "/roles/{id}/permissions/{permissionID}"), authMwr.MwrFunc(re.removePermission))
 }
 
 // @Summary roles list

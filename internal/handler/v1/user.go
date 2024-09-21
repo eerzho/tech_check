@@ -14,22 +14,20 @@ type user struct {
 
 func newUser(
 	mux *http.ServeMux,
-	prefix string,
 	authMwr *mwr.Auth,
 	userSrvc UserSrvc,
 ) {
-	prefix += "/users"
 	u := user{
 		userSrvc: userSrvc,
 	}
-
-	mux.HandleFunc("GET "+prefix, authMwr.MwrFunc(u.list))
-	mux.HandleFunc("POST "+prefix, u.create)
-	mux.HandleFunc("GET "+prefix+"/{id}", authMwr.MwrFunc(u.show))
-	mux.HandleFunc("PATCH "+prefix+"/{id}", authMwr.MwrFunc(u.update))
-	mux.HandleFunc("DELETE "+prefix+"/{id}", authMwr.MwrFunc(u.delete))
-	mux.HandleFunc("POST "+prefix+"/{id}/roles/{roleID}", authMwr.MwrFunc(u.addRole))
-	mux.HandleFunc("DELETE "+prefix+"/{id}/roles/{roleID}", authMwr.MwrFunc(u.removeRole))
+	
+	mux.HandleFunc(Url(http.MethodGet, "/users"), authMwr.MwrFunc(u.list))
+	mux.HandleFunc(Url(http.MethodPost, "/users"), u.create)
+	mux.HandleFunc(Url(http.MethodGet, "/users/{id}"), authMwr.MwrFunc(u.show))
+	mux.HandleFunc(Url(http.MethodPatch, "/users/{id}"), authMwr.MwrFunc(u.update))
+	mux.HandleFunc(Url(http.MethodDelete, "/users/{id}"), authMwr.MwrFunc(u.delete))
+	mux.HandleFunc(Url(http.MethodPost, "/users/{id}/roles/{roleID}"), authMwr.MwrFunc(u.addRole))
+	mux.HandleFunc(Url(http.MethodDelete, "/users/{id}/roles/{roleID}"), authMwr.MwrFunc(u.removeRole))
 }
 
 // @Summary users list
