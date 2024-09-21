@@ -10,6 +10,7 @@ type (
 	UserSrvc interface {
 		GetByEmail(ctx context.Context, email string) (*model.User, error)
 		GetByID(ctx context.Context, id string) (*model.User, error)
+		GetOrCreate(ctx context.Context, email, name, avatar string) (*model.User, error)
 	}
 
 	RefreshTokenSrvc interface {

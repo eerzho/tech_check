@@ -14,22 +14,25 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/api/idtoken"
 )
 
 type Auth struct {
 	rTokenExpiresHour int
 	aTokenExpiresHour int
 	rTokenLength      int
+	googleClientID    string
 	jwtSecret         []byte
 	userSrvc          UserSrvc
 	refreshTokenSrvc  RefreshTokenSrvc
 }
 
-func NewAuth(jwtSecret string, userSrvc UserSrvc, refreshTokenSrvc RefreshTokenSrvc) *Auth {
+func NewAuth(googleClientID, jwtSecret string, userSrvc UserSrvc, refreshTokenSrvc RefreshTokenSrvc) *Auth {
 	return &Auth{
 		rTokenExpiresHour: 24,
 		aTokenExpiresHour: 2,
 		rTokenLength:      50,
+		googleClientID:    googleClientID,
 		jwtSecret:         []byte(jwtSecret),
 		userSrvc:          userSrvc,
 		refreshTokenSrvc:  refreshTokenSrvc,
@@ -40,6 +43,40 @@ func (a *Auth) Login(ctx context.Context, email, password, ip string) (*dto.Toke
 	const op = "srvc.Auth.Login"
 
 	user, err := a.validateCredential(ctx, email, password)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	token, err := a.createToken(ctx, user, ip)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return token, nil
+}
+
+func (a *Auth) GoogleLogin(ctx context.Context, tokenID, ip string) (*dto.Token, error) {
+	const op = "srvc.Auth.GoogleLogin"
+
+	payload, err := idtoken.Validate(ctx, tokenID, a.googleClientID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	email, ok := payload.Claims["email"].(string)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", op, def.ErrGoogleInvalidData)
+	}
+	name, ok := payload.Claims["name"].(string)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", op, def.ErrGoogleInvalidData)
+	}
+	avatar, ok := payload.Claims["picture"].(string)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", op, def.ErrGoogleInvalidData)
+	}
+
+	user, err := a.userSrvc.GetOrCreate(ctx, email, name, avatar)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

@@ -14,6 +14,7 @@ type (
 		Mongo      Mongo
 		JWT        JWT
 		WorkerPool WorkerPool
+		Google     Google
 	}
 
 	HTTP struct {
@@ -36,6 +37,10 @@ type (
 
 	WorkerPool struct {
 		Count int `env:"WORKER_POOL_COUNT" env-default:"10"`
+	}
+
+	Google struct {
+		ClientID string `env:"GOOGLE_CLIENT_ID" env-required:"true"`
 	}
 )
 

@@ -94,6 +94,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/auth/google": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "google login",
+                "parameters": [
+                    {
+                        "description": "google login request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.GoogleLogin"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.success"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.Token"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/refresh": {
             "post": {
                 "consumes": [
@@ -1810,6 +1855,9 @@ const docTemplate = `{
         "model.User": {
             "type": "object",
             "properties": {
+                "avatar": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -1868,6 +1916,17 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 50,
                     "minLength": 1
+                }
+            }
+        },
+        "request.GoogleLogin": {
+            "type": "object",
+            "required": [
+                "token_id"
+            ],
+            "properties": {
+                "token_id": {
+                    "type": "string"
                 }
             }
         },

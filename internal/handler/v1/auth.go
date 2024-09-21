@@ -30,6 +30,7 @@ func newAuth(
 	}
 
 	mux.HandleFunc("POST "+prefix, a.login)
+	mux.HandleFunc("POST "+prefix+"/google", a.googleLogin)
 	mux.HandleFunc("GET "+prefix, authMwr.MwrFunc(a.me))
 	mux.HandleFunc("POST "+prefix+"/refresh", a.refresh)
 }
@@ -52,6 +53,33 @@ func (a *auth) login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token, err := a.authSrvc.Login(r.Context(), req.Email, req.Password, a.rp.GetHeaderIP(r))
+	if err != nil {
+		a.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		return
+	}
+
+	a.rb.JsonSuccess(w, r, http.StatusOK, token)
+}
+
+
+// @Summary google login
+// @Tags auth
+// @Router /v1/auth/google [post]
+// @Accept json
+// @Param body body request.GoogleLogin true "google login request"
+// @Produce json
+// @Success 200 {object} response.success{data=dto.Token}
+func (a *auth) googleLogin(w http.ResponseWriter, r *http.Request) {
+	const op = "v1.auth.googleLogin"
+
+	var req request.GoogleLogin
+	err := a.rp.ParseBody(r, &req)
+	if err != nil {
+		a.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		return
+	}
+
+	token, err := a.authSrvc.GoogleLogin(r.Context(), req.TokenID, a.rp.GetHeaderIP(r))
 	if err != nil {
 		a.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return

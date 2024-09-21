@@ -78,7 +78,7 @@ func setUpServices(cfg *config.Config, repos *repos) *srvcs {
 	role := srvc.NewRole(repos.Role, permission)
 	user := srvc.NewUser(repos.User, role)
 	refreshToken := srvc.NewRefreshToken(repos.RefreshToken)
-	auth := srvc.NewAuth(cfg.JWT.Secret, user, refreshToken)
+	auth := srvc.NewAuth(cfg.Google.ClientID, cfg.JWT.Secret, user, refreshToken)
 	category := srvc.NewCategory(repos.Category)
 	question := srvc.NewQuestion(repos.Question, category)
 

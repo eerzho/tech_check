@@ -130,6 +130,7 @@ func (u *User) Update(ctx context.Context, user *model.User) error {
 		"$set": bson.M{
 			"name":       user.Name,
 			"email":      user.Email,
+			"avatar":     user.Avatar,
 			"updated_at": user.UpdatedAt,
 			"role_ids":   user.RoleIDs,
 		},

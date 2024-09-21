@@ -2,6 +2,7 @@ package srvc
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"tech_check/internal/def"
 	"tech_check/internal/dto"
@@ -64,6 +65,39 @@ func (u *User) Create(ctx context.Context, email, name, password string) (*model
 	}
 
 	return &user, nil
+}
+
+func (u *User) GetOrCreate(ctx context.Context, email, name, avatar string) (*model.User, error) {
+	const op = "srvc.User.GetOrCreate"
+
+	user, err := u.GetByEmail(ctx, email)
+	if err == nil {
+		user.Name = name
+		user.Avatar = avatar
+		
+		err = u.userRepo.Update(ctx, user)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+
+		return user, nil
+	}
+
+	if !errors.Is(err, def.ErrNotFound) {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	user = &model.User{
+		Email:  email,
+		Name:   name,
+		Avatar: avatar,
+	}
+	err = u.userRepo.Create(ctx, user)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return user, nil
 }
 
 func (u *User) GetByID(ctx context.Context, id string) (*model.User, error) {

@@ -17,4 +17,5 @@ var (
 	ErrTokensMismatch       = errors.New("refresh token and access token mismatch")
 	ErrRTokenExpired        = errors.New("refresh token expired")
 	ErrInvalidRToken        = errors.New("invalid refresh token")
+	ErrGoogleInvalidData    = errors.New("invalid google data")
 )
