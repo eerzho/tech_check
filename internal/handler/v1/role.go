@@ -9,23 +9,17 @@ import (
 )
 
 type role struct {
-	rp       *request.Parser
-	rb       *response.Builder
 	roleSrvc RoleSrvc
 }
 
 func newRole(
 	mux *http.ServeMux,
 	prefix string,
-	rp *request.Parser,
-	rb *response.Builder,
 	authMwr *mwr.Auth,
 	roleSrvc RoleSrvc,
 ) {
 	prefix += "/roles"
 	re := role{
-		rp:       rp,
-		rb:       rb,
 		roleSrvc: roleSrvc,
 	}
 
@@ -55,7 +49,7 @@ func newRole(
 func (re *role) list(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.role.list"
 
-	search := re.rp.GetQuerySearch(r)
+	search := request.GetQuerySearch(r)
 	roles, pagination, err := re.roleSrvc.List(
 		r.Context(),
 		search.Pagination.Page,
@@ -64,11 +58,11 @@ func (re *role) list(w http.ResponseWriter, r *http.Request) {
 		search.Sorts,
 	)
 	if err != nil {
-		re.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	re.rb.JsonList(w, r, roles, pagination)
+	response.JsonList(w, r, roles, pagination)
 }
 
 // @Summary create role
@@ -83,19 +77,19 @@ func (re *role) create(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.role.create"
 
 	var req request.RoleCreate
-	err := re.rp.ParseBody(r, &req)
+	err := request.ParseBody(r, &req)
 	if err != nil {
-		re.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
 	role, err := re.roleSrvc.Create(r.Context(), req.Name)
 	if err != nil {
-		re.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	re.rb.JsonSuccess(w, r, http.StatusCreated, role)
+	response.JsonSuccess(w, r, http.StatusCreated, role)
 }
 
 // @Summary get role by id
@@ -111,11 +105,11 @@ func (re *role) show(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	role, err := re.roleSrvc.GetByID(r.Context(), id)
 	if err != nil {
-		re.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	re.rb.JsonSuccess(w, r, http.StatusOK, role)
+	response.JsonSuccess(w, r, http.StatusOK, role)
 }
 
 // @Summary update role by id
@@ -133,19 +127,19 @@ func (re *role) update(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	var req request.RoleUpdate
 
-	err := re.rp.ParseBody(r, &req)
+	err := request.ParseBody(r, &req)
 	if err != nil {
-		re.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
 	role, err := re.roleSrvc.Update(r.Context(), id, req.Name)
 	if err != nil {
-		re.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	re.rb.JsonSuccess(w, r, http.StatusOK, role)
+	response.JsonSuccess(w, r, http.StatusOK, role)
 }
 
 // @Summary delete role by id
@@ -160,11 +154,11 @@ func (re *role) delete(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	err := re.roleSrvc.Delete(r.Context(), id)
 	if err != nil {
-		re.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	re.rb.JsonSuccess(w, r, http.StatusNoContent, nil)
+	response.JsonSuccess(w, r, http.StatusNoContent, nil)
 }
 
 // @Summary add permission
@@ -181,11 +175,11 @@ func (re *role) addPermission(w http.ResponseWriter, r *http.Request) {
 	permissionID := r.PathValue("permissionID")
 	role, err := re.roleSrvc.AddPermission(r.Context(), id, permissionID)
 	if err != nil {
-		re.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	re.rb.JsonSuccess(w, r, http.StatusOK, role)
+	response.JsonSuccess(w, r, http.StatusOK, role)
 }
 
 // @Summary remove permission
@@ -202,9 +196,9 @@ func (re *role) removePermission(w http.ResponseWriter, r *http.Request) {
 	permissionID := r.PathValue("permissionID")
 	role, err := re.roleSrvc.RemovePermission(r.Context(), id, permissionID)
 	if err != nil {
-		re.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	re.rb.JsonSuccess(w, r, http.StatusOK, role)
+	response.JsonSuccess(w, r, http.StatusOK, role)
 }

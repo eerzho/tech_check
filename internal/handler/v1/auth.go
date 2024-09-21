@@ -9,23 +9,17 @@ import (
 )
 
 type auth struct {
-	rp       *request.Parser
-	rb       *response.Builder
 	authSrvc AuthSrvc
 }
 
 func newAuth(
 	mux *http.ServeMux,
 	prefix string,
-	rp *request.Parser,
-	rb *response.Builder,
 	authMwr *mwr.Auth,
 	authSrvc AuthSrvc,
 ) {
 	prefix += "/auth"
 	a := auth{
-		rp:       rp,
-		rb:       rb,
 		authSrvc: authSrvc,
 	}
 
@@ -46,21 +40,20 @@ func (a *auth) login(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.auth.login"
 
 	var req request.Login
-	err := a.rp.ParseBody(r, &req)
+	err := request.ParseBody(r, &req)
 	if err != nil {
-		a.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	token, err := a.authSrvc.Login(r.Context(), req.Email, req.Password, a.rp.GetHeaderIP(r))
+	token, err := a.authSrvc.Login(r.Context(), req.Email, req.Password, request.GetHeaderIP(r))
 	if err != nil {
-		a.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	a.rb.JsonSuccess(w, r, http.StatusOK, token)
+	response.JsonSuccess(w, r, http.StatusOK, token)
 }
-
 
 // @Summary google login
 // @Tags auth
@@ -73,19 +66,19 @@ func (a *auth) googleLogin(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.auth.googleLogin"
 
 	var req request.GoogleLogin
-	err := a.rp.ParseBody(r, &req)
+	err := request.ParseBody(r, &req)
 	if err != nil {
-		a.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	token, err := a.authSrvc.GoogleLogin(r.Context(), req.TokenID, a.rp.GetHeaderIP(r))
+	token, err := a.authSrvc.GoogleLogin(r.Context(), req.TokenID, request.GetHeaderIP(r))
 	if err != nil {
-		a.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	a.rb.JsonSuccess(w, r, http.StatusOK, token)
+	response.JsonSuccess(w, r, http.StatusOK, token)
 }
 
 // @Summary get auth user
@@ -97,13 +90,13 @@ func (a *auth) googleLogin(w http.ResponseWriter, r *http.Request) {
 func (a *auth) me(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.auth.me"
 
-	user, err := a.rp.GetAuthUser(r)
+	user, err := request.GetAuthUser(r)
 	if err != nil {
-		a.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	a.rb.JsonSuccess(w, r, http.StatusOK, user)
+	response.JsonSuccess(w, r, http.StatusOK, user)
 }
 
 // @Summary refresh token
@@ -117,17 +110,17 @@ func (a *auth) refresh(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.auth.refresh"
 
 	var req request.Refresh
-	err := a.rp.ParseBody(r, &req)
+	err := request.ParseBody(r, &req)
 	if err != nil {
-		a.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	token, err := a.authSrvc.Refresh(r.Context(), req.AToken, req.RToken, a.rp.GetHeaderIP(r))
+	token, err := a.authSrvc.Refresh(r.Context(), req.AToken, req.RToken, request.GetHeaderIP(r))
 	if err != nil {
-		a.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	a.rb.JsonSuccess(w, r, http.StatusOK, token)
+	response.JsonSuccess(w, r, http.StatusOK, token)
 }

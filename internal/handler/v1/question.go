@@ -9,23 +9,17 @@ import (
 )
 
 type question struct {
-	rp           *request.Parser
-	rb           *response.Builder
 	questionSrvc QuestionSrvc
 }
 
 func newQuestion(
 	mux *http.ServeMux,
 	prefix string,
-	rp *request.Parser,
-	rb *response.Builder,
 	authMwr *mwr.Auth,
 	questionSrvc QuestionSrvc,
 ) {
 	prefix += "/questions"
 	q := question{
-		rp:           rp,
-		rb:           rb,
 		questionSrvc: questionSrvc,
 	}
 
@@ -50,7 +44,7 @@ func newQuestion(
 func (q *question) list(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.question.list"
 
-	search := q.rp.GetQuerySearch(r)
+	search := request.GetQuerySearch(r)
 	questions, pagination, err := q.questionSrvc.List(
 		r.Context(),
 		search.Pagination.Page,
@@ -59,11 +53,11 @@ func (q *question) list(w http.ResponseWriter, r *http.Request) {
 		search.Sorts,
 	)
 	if err != nil {
-		q.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	q.rb.JsonList(w, r, questions, pagination)
+	response.JsonList(w, r, questions, pagination)
 }
 
 // @Summary create question
@@ -78,9 +72,9 @@ func (q *question) create(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.question.create"
 
 	var req request.QuestionCreate
-	err := q.rp.ParseBody(r, &req)
+	err := request.ParseBody(r, &req)
 	if err != nil {
-		q.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
@@ -90,11 +84,11 @@ func (q *question) create(w http.ResponseWriter, r *http.Request) {
 		req.CategoryID,
 	)
 	if err != nil {
-		q.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	q.rb.JsonSuccess(w, r, http.StatusCreated, question)
+	response.JsonSuccess(w, r, http.StatusCreated, question)
 }
 
 // @Summary get question by id
@@ -110,11 +104,11 @@ func (q *question) show(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	question, err := q.questionSrvc.GetByID(r.Context(), id)
 	if err != nil {
-		q.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	q.rb.JsonSuccess(w, r, http.StatusOK, question)
+	response.JsonSuccess(w, r, http.StatusOK, question)
 }
 
 // @Summary update profile
@@ -132,19 +126,19 @@ func (q *question) update(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	var req request.QuestionUpdate
 
-	err := q.rp.ParseBody(r, &req)
+	err := request.ParseBody(r, &req)
 	if err != nil {
-		q.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
 	question, err := q.questionSrvc.Update(r.Context(), id, req.Text)
 	if err != nil {
-		q.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	q.rb.JsonSuccess(w, r, http.StatusOK, question)
+	response.JsonSuccess(w, r, http.StatusOK, question)
 }
 
 // @Summary delete question by id
@@ -160,9 +154,9 @@ func (q *question) delete(w http.ResponseWriter, r *http.Request) {
 
 	err := q.questionSrvc.Delete(r.Context(), id)
 	if err != nil {
-		q.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	q.rb.JsonSuccess(w, r, http.StatusNoContent, nil)
+	response.JsonSuccess(w, r, http.StatusNoContent, nil)
 }

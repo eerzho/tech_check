@@ -9,23 +9,17 @@ import (
 )
 
 type permission struct {
-	rp             *request.Parser
-	rb             *response.Builder
 	permissionSrvc PermissionSrvc
 }
 
 func newPermission(
 	mux *http.ServeMux,
 	prefix string,
-	rp *request.Parser,
-	rb *response.Builder,
 	authMwr *mwr.Auth,
 	permissionSrvc PermissionSrvc,
 ) {
 	prefix += "/permissions"
 	p := permission{
-		rp:             rp,
-		rb:             rb,
 		permissionSrvc: permissionSrvc,
 	}
 
@@ -53,7 +47,7 @@ func newPermission(
 func (p *permission) list(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.permission.list"
 
-	search := p.rp.GetQuerySearch(r)
+	search := request.GetQuerySearch(r)
 	permissions, pagination, err := p.permissionSrvc.List(
 		r.Context(),
 		search.Pagination.Page,
@@ -62,11 +56,11 @@ func (p *permission) list(w http.ResponseWriter, r *http.Request) {
 		search.Sorts,
 	)
 	if err != nil {
-		p.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	p.rb.JsonList(w, r, permissions, pagination)
+	response.JsonList(w, r, permissions, pagination)
 }
 
 // @Summary create permission
@@ -81,19 +75,19 @@ func (p *permission) create(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.permission.create"
 
 	var req request.PermissionCreate
-	err := p.rp.ParseBody(r, &req)
+	err := request.ParseBody(r, &req)
 	if err != nil {
-		p.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
 	permission, err := p.permissionSrvc.Create(r.Context(), req.Name)
 	if err != nil {
-		p.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	p.rb.JsonSuccess(w, r, http.StatusCreated, permission)
+	response.JsonSuccess(w, r, http.StatusCreated, permission)
 }
 
 // @Summary get permission by id
@@ -109,11 +103,11 @@ func (p *permission) show(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	permission, err := p.permissionSrvc.GetByID(r.Context(), id)
 	if err != nil {
-		p.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	p.rb.JsonSuccess(w, r, http.StatusOK, permission)
+	response.JsonSuccess(w, r, http.StatusOK, permission)
 }
 
 // @Summary update permission by id
@@ -131,19 +125,19 @@ func (p *permission) update(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	var req request.PermissionUpdate
 
-	err := p.rp.ParseBody(r, &req)
+	err := request.ParseBody(r, &req)
 	if err != nil {
-		p.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
 	permission, err := p.permissionSrvc.Update(r.Context(), id, req.Name)
 	if err != nil {
-		p.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	p.rb.JsonSuccess(w, r, http.StatusOK, permission)
+	response.JsonSuccess(w, r, http.StatusOK, permission)
 }
 
 // @Summary delete permission by id
@@ -158,9 +152,9 @@ func (p *permission) delete(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	err := p.permissionSrvc.Delete(r.Context(), id)
 	if err != nil {
-		p.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	p.rb.JsonSuccess(w, r, http.StatusNoContent, nil)
+	response.JsonSuccess(w, r, http.StatusNoContent, nil)
 }

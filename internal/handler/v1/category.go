@@ -9,23 +9,17 @@ import (
 )
 
 type category struct {
-	rp           *request.Parser
-	rb           *response.Builder
 	categorySrvc CategorySrvc
 }
 
 func newCategory(
 	mux *http.ServeMux,
 	prefix string,
-	rp *request.Parser,
-	rb *response.Builder,
 	authMwr *mwr.Auth,
 	categorySrvc CategorySrvc,
 ) {
 	prefix += "/categories"
 	c := category{
-		rp:           rp,
-		rb:           rb,
 		categorySrvc: categorySrvc,
 	}
 
@@ -54,7 +48,7 @@ func newCategory(
 func (c *category) list(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.category.list"
 
-	search := c.rp.GetQuerySearch(r)
+	search := request.GetQuerySearch(r)
 	categories, pagination, err := c.categorySrvc.List(
 		r.Context(),
 		search.Pagination.Page,
@@ -63,11 +57,11 @@ func (c *category) list(w http.ResponseWriter, r *http.Request) {
 		search.Sorts,
 	)
 	if err != nil {
-		c.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	c.rb.JsonList(w, r, categories, pagination)
+	response.JsonList(w, r, categories, pagination)
 }
 
 // @Summary create category
@@ -82,9 +76,9 @@ func (c *category) create(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.category.create"
 
 	var req request.CategoryCreate
-	err := c.rp.ParseBody(r, &req)
+	err := request.ParseBody(r, &req)
 	if err != nil {
-		c.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
@@ -94,11 +88,11 @@ func (c *category) create(w http.ResponseWriter, r *http.Request) {
 		req.Description,
 	)
 	if err != nil {
-		c.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	c.rb.JsonSuccess(w, r, http.StatusCreated, category)
+	response.JsonSuccess(w, r, http.StatusCreated, category)
 }
 
 // @Summary get category by id
@@ -114,11 +108,11 @@ func (c *category) show(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	category, err := c.categorySrvc.GetByID(r.Context(), id)
 	if err != nil {
-		c.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	c.rb.JsonSuccess(w, r, http.StatusOK, category)
+	response.JsonSuccess(w, r, http.StatusOK, category)
 }
 
 // @Summary update profile
@@ -136,19 +130,19 @@ func (c *category) update(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	var req request.CategoryUpdate
 
-	err := c.rp.ParseBody(r, &req)
+	err := request.ParseBody(r, &req)
 	if err != nil {
-		c.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
 	category, err := c.categorySrvc.Update(r.Context(), id, req.Name, req.Description)
 	if err != nil {
-		c.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	c.rb.JsonSuccess(w, r, http.StatusOK, category)
+	response.JsonSuccess(w, r, http.StatusOK, category)
 }
 
 // @Summary delete category by id
@@ -164,9 +158,9 @@ func (c *category) delete(w http.ResponseWriter, r *http.Request) {
 
 	err := c.categorySrvc.Delete(r.Context(), id)
 	if err != nil {
-		c.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	c.rb.JsonSuccess(w, r, http.StatusNoContent, nil)
+	response.JsonSuccess(w, r, http.StatusNoContent, nil)
 }

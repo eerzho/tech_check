@@ -9,17 +9,17 @@ import (
 )
 
 func New(mux *http.ServeMux, app *app.App, prefix string) http.Handler {
-	rp := request.NewParser()
-	rb := response.NewBuilder(app.Cfg.IsDebug, app.Lg)
+	request.InitParser()
+	response.InitBuilder(app.Cfg.IsDebug, app.Lg)
 
-	authMwr := mwr.NewAuth(rb, app.Srvcs.Auth, app.Srvcs.User)
+	authMwr := mwr.NewAuth(app.Srvcs.Auth, app.Srvcs.User)
 
-	newUser(mux, prefix, rp, rb, authMwr, app.Srvcs.User)
-	newAuth(mux, prefix, rp, rb, authMwr, app.Srvcs.Auth)
-	newRole(mux, prefix, rp, rb, authMwr, app.Srvcs.Role)
-	newPermission(mux, prefix, rp, rb, authMwr, app.Srvcs.Permission)
-	newCategory(mux, prefix, rp, rb, authMwr, app.Srvcs.Category)
-	newQuestion(mux, prefix, rp, rb, authMwr, app.Srvcs.Question)
+	newUser(mux, prefix, authMwr, app.Srvcs.User)
+	newAuth(mux, prefix, authMwr, app.Srvcs.Auth)
+	newRole(mux, prefix, authMwr, app.Srvcs.Role)
+	newPermission(mux, prefix, authMwr, app.Srvcs.Permission)
+	newCategory(mux, prefix, authMwr, app.Srvcs.Category)
+	newQuestion(mux, prefix, authMwr, app.Srvcs.Question)
 
 	reqIDMwr := mwr.NewRequestId()
 	reqLgMwr := mwr.NewRequestLogger(app.Lg)

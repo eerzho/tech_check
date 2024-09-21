@@ -9,23 +9,17 @@ import (
 )
 
 type user struct {
-	rp       *request.Parser
-	rb       *response.Builder
 	userSrvc UserSrvc
 }
 
 func newUser(
 	mux *http.ServeMux,
 	prefix string,
-	rp *request.Parser,
-	rb *response.Builder,
 	authMwr *mwr.Auth,
 	userSrvc UserSrvc,
 ) {
 	prefix += "/users"
 	u := user{
-		rp:       rp,
-		rb:       rb,
 		userSrvc: userSrvc,
 	}
 
@@ -53,7 +47,7 @@ func newUser(
 func (u *user) list(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.user.list"
 
-	search := u.rp.GetQuerySearch(r)
+	search := request.GetQuerySearch(r)
 	users, pagination, err := u.userSrvc.List(
 		r.Context(),
 		search.Pagination.Page,
@@ -62,11 +56,11 @@ func (u *user) list(w http.ResponseWriter, r *http.Request) {
 		search.Sorts,
 	)
 	if err != nil {
-		u.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	u.rb.JsonList(w, r, users, pagination)
+	response.JsonList(w, r, users, pagination)
 }
 
 // @Summary registration
@@ -80,9 +74,9 @@ func (u *user) create(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.user.create"
 
 	var req request.UserCreate
-	err := u.rp.ParseBody(r, &req)
+	err := request.ParseBody(r, &req)
 	if err != nil {
-		u.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
@@ -93,11 +87,11 @@ func (u *user) create(w http.ResponseWriter, r *http.Request) {
 		req.Password,
 	)
 	if err != nil {
-		u.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	u.rb.JsonSuccess(w, r, http.StatusCreated, user)
+	response.JsonSuccess(w, r, http.StatusCreated, user)
 }
 
 // @Summary get user by id
@@ -113,11 +107,11 @@ func (u *user) show(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	user, err := u.userSrvc.GetByID(r.Context(), id)
 	if err != nil {
-		u.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	u.rb.JsonSuccess(w, r, http.StatusOK, user)
+	response.JsonSuccess(w, r, http.StatusOK, user)
 }
 
 // @Summary update profile
@@ -135,19 +129,19 @@ func (u *user) update(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	var req request.UserUpdate
 
-	err := u.rp.ParseBody(r, &req)
+	err := request.ParseBody(r, &req)
 	if err != nil {
-		u.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
 	user, err := u.userSrvc.Update(r.Context(), id, req.Name)
 	if err != nil {
-		u.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	u.rb.JsonSuccess(w, r, http.StatusOK, user)
+	response.JsonSuccess(w, r, http.StatusOK, user)
 }
 
 // @Summary delete user by id
@@ -163,11 +157,11 @@ func (u *user) delete(w http.ResponseWriter, r *http.Request) {
 
 	err := u.userSrvc.Delete(r.Context(), id)
 	if err != nil {
-		u.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	u.rb.JsonSuccess(w, r, http.StatusNoContent, nil)
+	response.JsonSuccess(w, r, http.StatusNoContent, nil)
 }
 
 // @Summary add role
@@ -184,11 +178,11 @@ func (u *user) addRole(w http.ResponseWriter, r *http.Request) {
 	roleID := r.PathValue("roleID")
 	user, err := u.userSrvc.AddRole(r.Context(), id, roleID)
 	if err != nil {
-		u.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	u.rb.JsonSuccess(w, r, http.StatusOK, user)
+	response.JsonSuccess(w, r, http.StatusOK, user)
 }
 
 // @Summary remove role
@@ -205,9 +199,9 @@ func (u *user) removeRole(w http.ResponseWriter, r *http.Request) {
 	roleID := r.PathValue("roleID")
 	user, err := u.userSrvc.RemoveRole(r.Context(), id, roleID)
 	if err != nil {
-		u.rb.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
+		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	u.rb.JsonSuccess(w, r, http.StatusOK, user)
+	response.JsonSuccess(w, r, http.StatusOK, user)
 }
