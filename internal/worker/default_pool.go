@@ -13,9 +13,7 @@ func Start(lg *slog.Logger, count int) {
 }
 
 func Stop() {
-	if defaultPool != nil {
-		defaultPool.Stop()
-	}
+	defaultPool.Stop()
 }
 
 func AddTask(task Task) {
