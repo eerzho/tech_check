@@ -804,6 +804,17 @@ const docTemplate = `{
                         "description": "text",
                         "name": "filters[text]",
                         "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "junior",
+                            "middle",
+                            "senior"
+                        ],
+                        "type": "string",
+                        "description": "grade",
+                        "name": "filters[grade]",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1738,6 +1749,19 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "def.GradeName": {
+            "type": "string",
+            "enum": [
+                "junior",
+                "middle",
+                "senior"
+            ],
+            "x-enum-varnames": [
+                "GradeJunior",
+                "GradeMiddle",
+                "GradeSenior"
+            ]
+        },
         "dto.Pagination": {
             "type": "object",
             "properties": {
@@ -1814,6 +1838,9 @@ const docTemplate = `{
                 },
                 "created_at": {
                     "type": "string"
+                },
+                "grade": {
+                    "$ref": "#/definitions/def.GradeName"
                 },
                 "id": {
                     "type": "string"
@@ -1978,11 +2005,20 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "category_id",
+                "grade",
                 "text"
             ],
             "properties": {
                 "category_id": {
                     "type": "string"
+                },
+                "grade": {
+                    "type": "string",
+                    "enum": [
+                        "junior",
+                        "middle",
+                        "senior"
+                    ]
                 },
                 "text": {
                     "type": "string",
@@ -1994,9 +2030,18 @@ const docTemplate = `{
         "request.QuestionUpdate": {
             "type": "object",
             "required": [
+                "grade",
                 "text"
             ],
             "properties": {
+                "grade": {
+                    "type": "string",
+                    "enum": [
+                        "junior",
+                        "middle",
+                        "senior"
+                    ]
+                },
                 "text": {
                     "type": "string",
                     "maxLength": 200,

@@ -65,15 +65,15 @@ func (a *Auth) GoogleLogin(ctx context.Context, tokenID, ip string) (*dto.Token,
 
 	email, ok := payload.Claims["email"].(string)
 	if !ok {
-		return nil, fmt.Errorf("%s: %w", op, def.ErrGoogleInvalidData)
+		return nil, fmt.Errorf("%s: %w", op, def.ErrInvalidGoogleData)
 	}
 	name, ok := payload.Claims["name"].(string)
 	if !ok {
-		return nil, fmt.Errorf("%s: %w", op, def.ErrGoogleInvalidData)
+		return nil, fmt.Errorf("%s: %w", op, def.ErrInvalidGoogleData)
 	}
 	avatar, ok := payload.Claims["picture"].(string)
 	if !ok {
-		return nil, fmt.Errorf("%s: %w", op, def.ErrGoogleInvalidData)
+		return nil, fmt.Errorf("%s: %w", op, def.ErrInvalidGoogleData)
 	}
 
 	user, err := a.userSrvc.GetOrCreate(ctx, email, name, avatar)

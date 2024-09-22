@@ -3,6 +3,7 @@ package srvc
 import (
 	"context"
 	"fmt"
+	"tech_check/internal/def"
 	"tech_check/internal/dto"
 	"tech_check/internal/model"
 )
@@ -33,8 +34,13 @@ func (q *Question) List(ctx context.Context, page, count int, filters, sorts map
 	return questions, pagination, nil
 }
 
-func (q *Question) Create(ctx context.Context, text, categoryID string) (*model.Question, error) {
+func (q *Question) Create(ctx context.Context, text, grade, categoryID string) (*model.Question, error) {
 	const op = "srvq.Question.Create"
+
+	gradeObj, err := def.ValidateGradeName(grade)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
 
 	category, err := q.categorySrvc.GetByID(ctx, categoryID)
 	if err != nil {
@@ -43,6 +49,7 @@ func (q *Question) Create(ctx context.Context, text, categoryID string) (*model.
 
 	question := model.Question{
 		Text:       text,
+		Grade:      gradeObj,
 		CategoryID: category.ID,
 	}
 	err = q.questionRepo.Create(ctx, &question)
@@ -64,8 +71,13 @@ func (q *Question) GetByID(ctx context.Context, id string) (*model.Question, err
 	return question, nil
 }
 
-func (q *Question) Update(ctx context.Context, id, text string) (*model.Question, error) {
+func (q *Question) Update(ctx context.Context, id, text, grade string) (*model.Question, error) {
 	const op = "srvq.Question.Update"
+
+	gradeObj, err := def.ValidateGradeName(grade)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
 
 	question, err := q.questionRepo.GetByID(ctx, id)
 	if err != nil {
@@ -73,6 +85,7 @@ func (q *Question) Update(ctx context.Context, id, text string) (*model.Question
 	}
 
 	question.Text = text
+	question.Grade = gradeObj
 	err = q.questionRepo.Update(ctx, question)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)

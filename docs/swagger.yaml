@@ -1,5 +1,15 @@
 basePath: /api
 definitions:
+  def.GradeName:
+    enum:
+    - junior
+    - middle
+    - senior
+    type: string
+    x-enum-varnames:
+    - GradeJunior
+    - GradeMiddle
+    - GradeSenior
   dto.Pagination:
     properties:
       current_page:
@@ -50,6 +60,8 @@ definitions:
         type: string
       created_at:
         type: string
+      grade:
+        $ref: '#/definitions/def.GradeName'
       id:
         type: string
       text:
@@ -163,21 +175,35 @@ definitions:
     properties:
       category_id:
         type: string
+      grade:
+        enum:
+        - junior
+        - middle
+        - senior
+        type: string
       text:
         maxLength: 200
         minLength: 3
         type: string
     required:
     - category_id
+    - grade
     - text
     type: object
   request.QuestionUpdate:
     properties:
+      grade:
+        enum:
+        - junior
+        - middle
+        - senior
+        type: string
       text:
         maxLength: 200
         minLength: 3
         type: string
     required:
+    - grade
     - text
     type: object
   request.Refresh:
@@ -709,6 +735,14 @@ paths:
       - description: text
         in: query
         name: filters[text]
+        type: string
+      - description: grade
+        enum:
+        - junior
+        - middle
+        - senior
+        in: query
+        name: filters[grade]
         type: string
       produces:
       - application/json

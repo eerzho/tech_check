@@ -52,9 +52,9 @@ type (
 
 	QuestionSrvc interface {
 		List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]model.Question, *dto.Pagination, error)
-		Create(ctx context.Context, text, categoryID string) (*model.Question, error)
+		Create(ctx context.Context, text, grade, categoryID string) (*model.Question, error)
 		GetByID(ctx context.Context, id string) (*model.Question, error)
-		Update(ctx context.Context, id, text string) (*model.Question, error)
+		Update(ctx context.Context, id, grade, text string) (*model.Question, error)
 		Delete(ctx context.Context, id string) error
 	}
 )

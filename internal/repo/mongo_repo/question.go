@@ -38,6 +38,11 @@ func (q *Question) List(ctx context.Context, page, count int, filters, sorts map
 	for key, value := range filters {
 		if key == "text" {
 			filter[key] = bson.M{"$regex": value, "$options": "i"}
+		} else if key == "grade" {
+			_, err := def.ValidateGradeName(value)
+			if err == nil {
+				filter[key] = value
+			}
 		}
 	}
 
@@ -142,6 +147,7 @@ func (q *Question) Update(ctx context.Context, question *model.Question) error {
 	update := bson.M{
 		"$set": bson.M{
 			"text":       question.Text,
+			"grade":      question.Grade,
 			"updated_at": question.UpdatedAt,
 		},
 	}

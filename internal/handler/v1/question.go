@@ -37,6 +37,7 @@ func newQuestion(
 // @Param sorts[created_at] query string false "created_at" Enums(asc, desc)
 // @Param sorts[updated_at] query string false "updated_at" Enums(asc, desc)
 // @Param filters[text] query string false "text"
+// @Param filters[grade] query string false "grade" Enums(junior, middle, senior)
 // @Produce json
 // @Success 200 {object} response.list{data=[]model.Question,pagination=dto.Pagination}
 func (q *question) list(w http.ResponseWriter, r *http.Request) {
@@ -79,6 +80,7 @@ func (q *question) create(w http.ResponseWriter, r *http.Request) {
 	question, err := q.questionSrvc.Create(
 		r.Context(),
 		req.Text,
+		req.Grade,
 		req.CategoryID,
 	)
 	if err != nil {
@@ -130,7 +132,7 @@ func (q *question) update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	question, err := q.questionSrvc.Update(r.Context(), id, req.Text)
+	question, err := q.questionSrvc.Update(r.Context(), id, req.Text, req.Grade)
 	if err != nil {
 		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
