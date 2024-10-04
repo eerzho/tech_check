@@ -19,4 +19,5 @@ var (
 	ErrInvalidRToken        = errors.New("invalid refresh token")
 	ErrInvalidGoogleData    = errors.New("invalid google data")
 	ErrInvalidGradeValue    = errors.New("invalid grade value")
+	ErrValidation           = errors.New("validation error")
 )

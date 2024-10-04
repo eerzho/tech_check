@@ -3,9 +3,12 @@ package response
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"tech_check/internal/def"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type (
@@ -39,34 +42,22 @@ func NewBuilder(isDebug bool, lg *slog.Logger) *Builder {
 }
 
 func (b *Builder) JsonFail(w http.ResponseWriter, r *http.Request, err error) {
-	code := http.StatusInternalServerError
-	msg := b.originalErr(err).Error()
+	var code int
+	var msg string
+	var data interface{}
 
-	if errors.Is(err, def.ErrNotFound) {
-		code = http.StatusNotFound
-	} else if errors.Is(err, def.ErrAlreadyExists) ||
-		errors.Is(err, def.ErrInvalidBody) {
+	ve, ok := b.originalErr(err).(validator.ValidationErrors)
+	if ok {
 		code = http.StatusBadRequest
-	} else if errors.Is(err, def.ErrInvalidCredentials) ||
-		errors.Is(err, def.ErrAuthMissing) ||
-		errors.Is(err, def.ErrInvalidAuthFormat) ||
-		errors.Is(err, def.ErrInvalidSigningMethod) ||
-		errors.Is(err, def.ErrInvalidClaimsType) ||
-		errors.Is(err, def.ErrATokenExpired) ||
-		errors.Is(err, def.ErrInvalidUserType) ||
-		errors.Is(err, def.ErrTokensMismatch) ||
-		errors.Is(err, def.ErrRTokenExpired) ||
-		errors.Is(err, def.ErrInvalidRToken) {
-		code = http.StatusUnauthorized
-	} else if errors.Is(err, def.ErrCannotLogin) {
-		code = http.StatusForbidden
+		msg = def.ErrValidation.Error()
+		data = b.getData(ve)
+	} else {
+		code = b.getCode(err)
+		msg = b.getMsg(code, err)
+		data = nil
 	}
 
-	if !b.isDebug && code == http.StatusInternalServerError {
-		msg = http.StatusText(code)
-	}
-
-	f := fail{Message: msg}
+	f := fail{Message: msg, Data: data}
 
 	b.logFail(r, code, err)
 	b.Json(w, code, &f)
@@ -100,6 +91,54 @@ func (b *Builder) Json(w http.ResponseWriter, code int, body interface{}) {
 
 	w.WriteHeader(code)
 	w.Write(jsonBody)
+}
+
+func (b *Builder) getCode(err error) int {
+	code := http.StatusInternalServerError
+
+	if errors.Is(err, def.ErrNotFound) {
+		code = http.StatusNotFound
+	} else if errors.Is(err, def.ErrAlreadyExists) ||
+		errors.Is(err, def.ErrInvalidBody) {
+		code = http.StatusBadRequest
+	} else if errors.Is(err, def.ErrInvalidCredentials) ||
+		errors.Is(err, def.ErrAuthMissing) ||
+		errors.Is(err, def.ErrInvalidAuthFormat) ||
+		errors.Is(err, def.ErrInvalidSigningMethod) ||
+		errors.Is(err, def.ErrInvalidClaimsType) ||
+		errors.Is(err, def.ErrATokenExpired) ||
+		errors.Is(err, def.ErrInvalidUserType) ||
+		errors.Is(err, def.ErrTokensMismatch) ||
+		errors.Is(err, def.ErrRTokenExpired) ||
+		errors.Is(err, def.ErrInvalidRToken) {
+		code = http.StatusUnauthorized
+	} else if errors.Is(err, def.ErrCannotLogin) {
+		code = http.StatusForbidden
+	}
+
+	return code
+}
+
+func (b *Builder) getMsg(code int, err error) string {
+	if b.isDebug {
+		return b.originalErr(err).Error()
+	}
+
+	if code >= http.StatusInternalServerError {
+		return http.StatusText(code)
+	}
+
+	return b.originalErr(err).Error()
+}
+
+func (b *Builder) getData(ve validator.ValidationErrors) map[string]string {
+	data := make(map[string]string, len(ve))
+
+	for _, err := range ve {
+		data[err.Field()] = fmt.Sprintf("validation failed on the '%s' tag", err.Tag())
+	}
+
+	return data
 }
 
 func (b *Builder) originalErr(err error) error {

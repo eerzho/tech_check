@@ -6,6 +6,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"reflect"
 	"strconv"
 	"strings"
 	"tech_check/internal/def"
@@ -19,8 +20,18 @@ type Parser struct {
 }
 
 func NewParser() *Parser {
+	validate := validator.New(validator.WithRequiredStructEnabled())
+
+	validate.RegisterTagNameFunc(func(field reflect.StructField) string {
+		name := strings.SplitN(field.Tag.Get("json"), ",", 2)[0]
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
+	
 	return &Parser{
-		validate: validator.New(validator.WithRequiredStructEnabled()),
+		validate: validate,
 	}
 }
 
@@ -35,7 +46,7 @@ func (p *Parser) ParseBody(r *http.Request, req interface{}) error {
 		return err
 	}
 
-	err = p.validate.Struct(req)
+	err = p.validate.StructCtx(r.Context(), req)
 	if err != nil {
 		return err
 	}
