@@ -146,7 +146,6 @@ func (p *Permission) Delete(ctx context.Context, id string) error {
 	}
 
 	filter := bson.M{"_id": idObj}
-
 	result, err := p.collection.DeleteOne(ctx, filter)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
@@ -154,6 +153,15 @@ func (p *Permission) Delete(ctx context.Context, id string) error {
 
 	if result.DeletedCount == 0 {
 		return fmt.Errorf("%s: %w", op, def.ErrNotFound)
+	}
+
+	roleCollection := p.collection.Database().Collection(def.TableRoles.String())
+	roleFilter := bson.M{"permission_ids": idObj}
+	roleUpdate := bson.M{"$pull": bson.M{"permission_ids": idObj}}
+
+	_, err = roleCollection.UpdateMany(ctx, roleFilter, roleUpdate)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	return nil

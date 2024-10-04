@@ -146,14 +146,22 @@ func (r *Role) Delete(ctx context.Context, id string) error {
 	}
 
 	filter := bson.M{"_id": idObj}
-
 	result, err := r.collection.DeleteOne(ctx, filter)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	if result.DeletedCount == 0 {
-		return fmt.Errorf("%s: %w", op, def.ErrNotFound)
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	userCollection := r.collection.Database().Collection(def.TableUsers.String())
+	userFilter := bson.M{"role_ids": idObj}
+	userUpdate := bson.M{"$pull": bson.M{"role_ids": idObj}}
+
+	_, err = userCollection.UpdateMany(ctx, userFilter, userUpdate)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	return nil
