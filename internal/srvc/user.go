@@ -74,7 +74,7 @@ func (u *User) GetOrCreate(ctx context.Context, email, name, avatar string) (*mo
 	if err == nil {
 		user.Name = name
 		user.Avatar = avatar
-		
+
 		err = u.userRepo.Update(ctx, user)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
@@ -214,4 +214,15 @@ func (u *User) RemoveRole(ctx context.Context, id, roleID string) (*model.User, 
 	}
 
 	return user, nil
+}
+
+func (u *User) HasPermission(ctx context.Context, user *model.User, permissionSlug string) (bool, error) {
+	const op = "srvc.User.HasPermission"
+
+	has, err := u.userRepo.HasPermission(ctx, user, permissionSlug)
+	if err != nil {
+		return false, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return has, nil
 }

@@ -103,18 +103,6 @@ func (p *Permission) Create(ctx context.Context, permission *model.Permission) e
 	return nil
 }
 
-func (p *Permission) CountBySlug(ctx context.Context, slug string) (int, error) {
-	const op = "mongo_repo.Permission.CountBySlug"
-
-	filter := bson.M{"slug": bson.M{"$regex": slug, "$options": "i"}}
-	count, err := p.collection.CountDocuments(ctx, filter)
-	if err != nil {
-		return 0, fmt.Errorf("%s: %w", op, err)
-	}
-
-	return int(count), nil
-}
-
 func (p *Permission) GetByID(ctx context.Context, id string) (*model.Permission, error) {
 	const op = "mongo_repo.Permission.GetByID"
 
@@ -135,59 +123,4 @@ func (p *Permission) GetByID(ctx context.Context, id string) (*model.Permission,
 	}
 
 	return &permission, nil
-}
-
-func (p *Permission) Delete(ctx context.Context, id string) error {
-	const op = "mongo_repo.Permission.Delete"
-
-	idObj, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	filter := bson.M{"_id": idObj}
-	result, err := p.collection.DeleteOne(ctx, filter)
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	if result.DeletedCount == 0 {
-		return fmt.Errorf("%s: %w", op, def.ErrNotFound)
-	}
-
-	roleCollection := p.collection.Database().Collection(def.TableRoles.String())
-	roleFilter := bson.M{"permission_ids": idObj}
-	roleUpdate := bson.M{"$pull": bson.M{"permission_ids": idObj}}
-
-	_, err = roleCollection.UpdateMany(ctx, roleFilter, roleUpdate)
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	return nil
-}
-
-func (p *Permission) Update(ctx context.Context, permission *model.Permission) error {
-	const op = "mongo_repo.Permission.Update"
-
-	permission.UpdatedAt = time.Now()
-
-	filter := bson.M{"_id": permission.ID}
-	update := bson.M{
-		"$set": bson.M{
-			"name":       permission.Name,
-			"updated_at": permission.UpdatedAt,
-		},
-	}
-
-	result, err := p.collection.UpdateOne(ctx, filter, update)
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	if result.MatchedCount == 0 {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	return nil
 }

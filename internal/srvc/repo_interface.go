@@ -15,6 +15,7 @@ type (
 		Delete(ctx context.Context, id string) error
 		IsExistsEmail(ctx context.Context, email string) (bool, error)
 		GetByEmail(ctx context.Context, email string) (*model.User, error)
+		HasPermission(ctx context.Context, user *model.User, permissionSlug string) (bool, error)
 	}
 
 	RefreshTokenRepo interface {
@@ -34,11 +35,7 @@ type (
 
 	PermissionRepo interface {
 		List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]model.Permission, *dto.Pagination, error)
-		Create(ctx context.Context, role *model.Permission) error
-		CountBySlug(ctx context.Context, slug string) (int, error)
 		GetByID(ctx context.Context, id string) (*model.Permission, error)
-		Delete(ctx context.Context, id string) error
-		Update(ctx context.Context, permission *model.Permission) error
 	}
 
 	CategoryRepo interface {

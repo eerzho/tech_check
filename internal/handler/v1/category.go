@@ -15,17 +15,37 @@ type category struct {
 func newCategory(
 	mux *http.ServeMux,
 	authMwr *mwr.Auth,
+	permissionMwr *mwr.Permission,
 	categorySrvc CategorySrvc,
 ) {
 	c := category{
 		categorySrvc: categorySrvc,
 	}
 
-	mux.HandleFunc(Url(http.MethodGet, "/categories"), authMwr.MwrFunc(c.list))
-	mux.HandleFunc(Url(http.MethodPost, "/categories"), authMwr.MwrFunc(c.create))
-	mux.HandleFunc(Url(http.MethodGet, "/categories/{id}"), authMwr.MwrFunc(c.show))
-	mux.HandleFunc(Url(http.MethodPatch, "/categories/{id}"), authMwr.MwrFunc(c.update))
-	mux.HandleFunc(Url(http.MethodDelete, "/categories/{id}"), authMwr.MwrFunc(c.delete))
+	mux.HandleFunc(
+		Url(http.MethodGet, "/categories"),
+		authMwr.MwrFunc(c.list),
+	)
+
+	mux.HandleFunc(
+		Url(http.MethodPost, "/categories"),
+		authMwr.MwrFunc(permissionMwr.MwrFunc(c.create, "category-create")),
+	)
+
+	mux.HandleFunc(
+		Url(http.MethodGet, "/categories/{id}"),
+		authMwr.MwrFunc(c.show),
+	)
+
+	mux.HandleFunc(
+		Url(http.MethodPatch, "/categories/{id}"),
+		authMwr.MwrFunc(permissionMwr.MwrFunc(c.update, "category-edit")),
+	)
+
+	mux.HandleFunc(
+		Url(http.MethodDelete, "/categories/{id}"),
+		authMwr.MwrFunc(permissionMwr.MwrFunc(c.delete, "category-delete")),
+	)
 }
 
 // @Summary categories list

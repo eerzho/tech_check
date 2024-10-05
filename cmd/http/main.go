@@ -10,16 +10,12 @@ import (
 	"syscall"
 	"tech_check/internal/app"
 	"tech_check/internal/handler"
-	"tech_check/internal/worker"
 	"time"
 )
 
 func main() {
 	app := app.MustNew()
 	server := setup(app)
-
-	worker.Start(app.Lg, app.Cfg.WorkerPool.Count)
-	defer worker.Stop()
 
 	errChan := make(chan error, 1)
 	stopChan := make(chan os.Signal, 1)

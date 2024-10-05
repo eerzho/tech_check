@@ -43,9 +43,8 @@ func MustNew() *App {
 	lg := mustSetupLogger(cfg)
 	mng := mustSetupMongo(cfg)
 
-	repos := setUpRepositories(mng)
-
-	srvcs := setUpServices(cfg, repos)
+	repos := setupRepositories(mng)
+	srvcs := setupServices(cfg, repos)
 
 	return &App{
 		Cfg:   cfg,
@@ -55,7 +54,7 @@ func MustNew() *App {
 	}
 }
 
-func setUpRepositories(mng *mongo.Database) *repos {
+func setupRepositories(mng *mongo.Database) *repos {
 	user := mongo_repo.NewUser(mng)
 	role := mongo_repo.NewRole(mng)
 	permission := mongo_repo.NewPermission(mng)
@@ -73,7 +72,7 @@ func setUpRepositories(mng *mongo.Database) *repos {
 	}
 }
 
-func setUpServices(cfg *config.Config, repos *repos) *srvcs {
+func setupServices(cfg *config.Config, repos *repos) *srvcs {
 	permission := srvc.NewPermission(repos.Permission)
 	role := srvc.NewRole(repos.Role, permission)
 	user := srvc.NewUser(repos.User, role)

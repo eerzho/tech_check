@@ -13,5 +13,6 @@ type (
 
 	UserSrvc interface {
 		GetByID(ctx context.Context, id string) (*model.User, error)
+		HasPermission(ctx context.Context, user *model.User, permissionSlug string) (bool, error)
 	}
 )

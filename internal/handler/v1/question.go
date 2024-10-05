@@ -15,17 +15,37 @@ type question struct {
 func newQuestion(
 	mux *http.ServeMux,
 	authMwr *mwr.Auth,
+	permissionMwr *mwr.Permission,
 	questionSrvc QuestionSrvc,
 ) {
 	q := question{
 		questionSrvc: questionSrvc,
 	}
 
-	mux.HandleFunc(Url(http.MethodGet, "/questions"), authMwr.MwrFunc(q.list))
-	mux.HandleFunc(Url(http.MethodPost, "/questions"), authMwr.MwrFunc(q.create))
-	mux.HandleFunc(Url(http.MethodGet, "/questions/{id}"), authMwr.MwrFunc(q.show))
-	mux.HandleFunc(Url(http.MethodPatch, "/questions/{id}"), authMwr.MwrFunc(q.update))
-	mux.HandleFunc(Url(http.MethodDelete, "/questions/{id}"), authMwr.MwrFunc(q.delete))
+	mux.HandleFunc(
+		Url(http.MethodGet, "/questions"),
+		authMwr.MwrFunc(q.list),
+	)
+
+	mux.HandleFunc(
+		Url(http.MethodPost, "/questions"),
+		authMwr.MwrFunc(permissionMwr.MwrFunc(q.create, "question-create")),
+	)
+
+	mux.HandleFunc(
+		Url(http.MethodGet, "/questions/{id}"),
+		authMwr.MwrFunc(q.show),
+	)
+
+	mux.HandleFunc(
+		Url(http.MethodPatch, "/questions/{id}"),
+		authMwr.MwrFunc(permissionMwr.MwrFunc(q.update, "question-edit")),
+	)
+
+	mux.HandleFunc(
+		Url(http.MethodDelete, "/questions/{id}"),
+		authMwr.MwrFunc(permissionMwr.MwrFunc(q.delete, "question-delete")),
+	)
 }
 
 // @Summary questions list

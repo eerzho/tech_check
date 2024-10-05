@@ -112,7 +112,8 @@ func (b *Builder) getCode(err error) int {
 		errors.Is(err, def.ErrRTokenExpired) ||
 		errors.Is(err, def.ErrInvalidRToken) {
 		code = http.StatusUnauthorized
-	} else if errors.Is(err, def.ErrCannotLogin) {
+	} else if errors.Is(err, def.ErrCannotLogin) ||
+		errors.Is(err, def.ErrAccessDenied) {
 		code = http.StatusForbidden
 	}
 

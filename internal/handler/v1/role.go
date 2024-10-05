@@ -15,19 +15,47 @@ type role struct {
 func newRole(
 	mux *http.ServeMux,
 	authMwr *mwr.Auth,
+	permissionMwr *mwr.Permission,
 	roleSrvc RoleSrvc,
 ) {
 	re := role{
 		roleSrvc: roleSrvc,
 	}
 
-	mux.HandleFunc(Url(http.MethodGet, "/roles"), authMwr.MwrFunc(re.list))
-	mux.HandleFunc(Url(http.MethodPost, "/roles"), authMwr.MwrFunc(re.create))
-	mux.HandleFunc(Url(http.MethodGet, "/roles/{id}"), authMwr.MwrFunc(re.show))
-	mux.HandleFunc(Url(http.MethodPatch, "/roles/{id}"), authMwr.MwrFunc(re.update))
-	mux.HandleFunc(Url(http.MethodDelete, "/roles/{id}"), authMwr.MwrFunc(re.delete))
-	mux.HandleFunc(Url(http.MethodPost, "/roles/{id}/permissions/{permissionID}"), authMwr.MwrFunc(re.addPermission))
-	mux.HandleFunc(Url(http.MethodDelete, "/roles/{id}/permissions/{permissionID}"), authMwr.MwrFunc(re.removePermission))
+	mux.HandleFunc(
+		Url(http.MethodGet, "/roles"),
+		authMwr.MwrFunc(permissionMwr.MwrFunc(re.list, "role-read")),
+	)
+
+	mux.HandleFunc(
+		Url(http.MethodPost, "/roles"),
+		authMwr.MwrFunc(permissionMwr.MwrFunc(re.create, "role-create")),
+	)
+	
+	mux.HandleFunc(
+		Url(http.MethodGet, "/roles/{id}"),
+		authMwr.MwrFunc(permissionMwr.MwrFunc(re.show, "role-read")),
+	)
+	
+	mux.HandleFunc(
+		Url(http.MethodPatch, "/roles/{id}"),
+		authMwr.MwrFunc(permissionMwr.MwrFunc(re.update, "role-edit")),
+	)
+	
+	mux.HandleFunc(
+		Url(http.MethodDelete, "/roles/{id}"),
+		authMwr.MwrFunc(permissionMwr.MwrFunc(re.delete, "role-delete")),
+	)
+	
+	mux.HandleFunc(
+		Url(http.MethodPost, "/roles/{id}/permissions/{permissionID}"),
+		authMwr.MwrFunc(permissionMwr.MwrFunc(re.addPermission, "role-edit")),
+	)
+	
+	mux.HandleFunc(
+		Url(http.MethodDelete, "/roles/{id}/permissions/{permissionID}"),
+		authMwr.MwrFunc(permissionMwr.MwrFunc(re.removePermission, "role-edit")),
+	)
 }
 
 // @Summary roles list

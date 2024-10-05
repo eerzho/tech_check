@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"tech_check/internal/app"
+	"tech_check/internal/config"
+	"tech_check/internal/def"
 	"tech_check/internal/model"
 	"tech_check/internal/repo/mongo_repo"
+	"tech_check/internal/util"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -13,54 +15,59 @@ import (
 )
 
 func main() {
-	app := app.MustNew()
+	cfg, err := config.New()
+	if err != nil {
+		panic(err)
+	}
+
+	mng, err := util.NewMongo(cfg.Mongo.DB, cfg.Mongo.URL)
+	if err != nil {
+		panic(err)
+	}
 
 	ctx := context.TODO()
-	dropAllCollections(ctx, app.Mng)
+	dropDB(ctx, mng)
 
-	permissionRepo := mongo_repo.NewPermission(app.Mng)
-	roleRepo := mongo_repo.NewRole(app.Mng)
-	userRepo := mongo_repo.NewUser(app.Mng)
-	categoryRepo := mongo_repo.NewCategory(app.Mng)
-	questionRepo := mongo_repo.NewQuestion(app.Mng)
-
-	categories := getAllCategories()
-	for _, category := range categories {
-		err := categoryRepo.Create(ctx, &category)
+	categoryRepo := mongo_repo.NewCategory(mng)
+	questionRepo := mongo_repo.NewQuestion(mng)
+	for _, category := range getAllCategories() {
+		err = categoryRepo.Create(ctx, &category)
 		if err != nil {
 			panic(err)
 		}
+
 		for i := 0; i < 10; i++ {
 			question := model.Question{
-				Text:       fmt.Sprintf("test question for %s number %d", category.Name, i),
+				Text: fmt.Sprintf("%s category test question %d", category.Name, i),
+				Grade: def.GradeJunior,
 				CategoryID: category.ID,
 			}
-			err := questionRepo.Create(ctx, &question)
+			err = questionRepo.Create(ctx, &question)
 			if err != nil {
 				panic(err)
 			}
 		}
 	}
 
-	permissions := getAllPermissions()
-	adminPermissions := make([]primitive.ObjectID, len(permissions))
-	for index, permission := range permissions {
-		err := permissionRepo.Create(ctx, &permission)
+	var permissionIDs []primitive.ObjectID
+	permissionRepo := mongo_repo.NewPermission(mng)
+	for _, permission := range getAllPermissions() {
+		err = permissionRepo.Create(ctx, &permission)
 		if err != nil {
 			panic(err)
 		}
-		adminPermissions[index] = permission.ID
+		permissionIDs = append(permissionIDs, permission.ID)
 	}
 
-	adminRole := getAdminRole()
-	adminRole.PermissionIDs = adminPermissions
-	err := roleRepo.Create(ctx, adminRole)
+	roleRepo := mongo_repo.NewRole(mng)
+	role := getRole(permissionIDs)
+	err = roleRepo.Create(ctx, role)
 	if err != nil {
 		panic(err)
 	}
 
-	adminUser := getAdminUser()
-	adminUser.RoleIDs = []primitive.ObjectID{adminRole.ID}
+	userRepo := mongo_repo.NewUser(mng)
+	adminUser := getAdminUser(role.ID)
 	err = userRepo.Create(ctx, adminUser)
 	if err != nil {
 		panic(err)
@@ -73,7 +80,7 @@ func main() {
 	}
 }
 
-func dropAllCollections(ctx context.Context, db *mongo.Database) {
+func dropDB(ctx context.Context, db *mongo.Database) {
 	collections, err := db.ListCollectionNames(ctx, map[string]interface{}{})
 	if err != nil {
 		panic(err)
@@ -84,18 +91,6 @@ func dropAllCollections(ctx context.Context, db *mongo.Database) {
 		if err != nil {
 			panic(err)
 		}
-	}
-}
-
-func getAllCategories() []model.Category {
-	return []model.Category{
-		{Name: "sql", Slug: "sql", Description: "checking technical sql skills"},
-		{Name: "golang", Slug: "golang", Description: "checking technical Go skills"},
-		{Name: "php", Slug: "php", Description: "checking technical PHP skills"},
-		{Name: "js", Slug: "js", Description: "checking technical JavaScript skills"},
-		{Name: "ts", Slug: "ts", Description: "checking technical TypeScript skills"},
-		{Name: "python", Slug: "python", Description: "checking technical Python skills"},
-		{Name: "vue", Slug: "vue", Description: "checking technical Vue.js skills"},
 	}
 }
 
@@ -112,7 +107,7 @@ func getDefaultUser() *model.User {
 	}
 }
 
-func getAdminUser() *model.User {
+func getAdminUser(roleID primitive.ObjectID) *model.User {
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.DefaultCost)
 	if err != nil {
 		panic(err)
@@ -122,80 +117,55 @@ func getAdminUser() *model.User {
 		Email:    "admin@test.com",
 		Name:     "admin",
 		Password: string(passwordHash),
+		RoleIDs:  []primitive.ObjectID{roleID},
 	}
 }
 
-func getAdminRole() *model.Role {
+func getRole(permissionIDs []primitive.ObjectID) *model.Role {
 	return &model.Role{
-		Name: "Admin",
-		Slug: "admin",
+		Name:          "Admin",
+		Slug:          "admin",
+		PermissionIDs: permissionIDs,
 	}
 }
 
 func getAllPermissions() []model.Permission {
-	permissionsReadPermission := model.Permission{
-		Name: "Permission Read",
-		Slug: "permission-read",
-	}
-	permissionsCreatePermission := model.Permission{
-		Name: "Permission Create",
-		Slug: "permission-create",
-	}
-	permissionsDeletePermission := model.Permission{
-		Name: "Permission Delete",
-		Slug: "permission-delete",
-	}
-	permissionsUpdatePermission := model.Permission{
-		Name: "Permission Update",
-		Slug: "permission-update",
-	}
-
-	usersReadPermission := model.Permission{
-		Name: "User Read",
-		Slug: "user-read",
-	}
-	usersCreatePermission := model.Permission{
-		Name: "User Create",
-		Slug: "user-create",
-	}
-	usersDeletePermission := model.Permission{
-		Name: "User Delete",
-		Slug: "user-delete",
-	}
-	usersUpdatePermission := model.Permission{
-		Name: "User Update",
-		Slug: "user-update",
-	}
-
-	rolesReadPermission := model.Permission{
-		Name: "Role Read",
-		Slug: "role-read",
-	}
-	rolesCreatePermission := model.Permission{
-		Name: "Role Create",
-		Slug: "role-create",
-	}
-	rolesDeletePermission := model.Permission{
-		Name: "Role Delete",
-		Slug: "role-delete",
-	}
-	rolesUpdatePermission := model.Permission{
-		Name: "Role Update",
-		Slug: "role-update",
-	}
-
 	return []model.Permission{
-		permissionsReadPermission,
-		permissionsCreatePermission,
-		permissionsDeletePermission,
-		permissionsUpdatePermission,
-		usersReadPermission,
-		usersCreatePermission,
-		usersDeletePermission,
-		usersUpdatePermission,
-		rolesReadPermission,
-		rolesCreatePermission,
-		rolesDeletePermission,
-		rolesUpdatePermission,
+		{Name: "Category read", Slug: "category-read"},
+		{Name: "Category create", Slug: "category-create"},
+		{Name: "Category edit", Slug: "category-edit"},
+		{Name: "Category delete", Slug: "category-delete"},
+
+		{Name: "Permission read", Slug: "permission-read"},
+		{Name: "Permission create", Slug: "permission-create"},
+		{Name: "Permission edit", Slug: "permission-edit"},
+		{Name: "Permission delete", Slug: "permission-delete"},
+
+		{Name: "Question read", Slug: "question-read"},
+		{Name: "Question create", Slug: "question-create"},
+		{Name: "Question edit", Slug: "question-edit"},
+		{Name: "Question delete", Slug: "question-delete"},
+
+		{Name: "Role read", Slug: "role-read"},
+		{Name: "Role create", Slug: "role-create"},
+		{Name: "Role edit", Slug: "role-edit"},
+		{Name: "Role delete", Slug: "role-delete"},
+
+		{Name: "User read", Slug: "user-read"},
+		{Name: "User create", Slug: "user-create"},
+		{Name: "User edit", Slug: "user-edit"},
+		{Name: "User delete", Slug: "user-delete"},
+	}
+}
+
+func getAllCategories() []model.Category {
+	return []model.Category{
+		{Name: "sql", Slug: "sql", Description: "checking technical sql skills"},
+		{Name: "golang", Slug: "golang", Description: "checking technical Go skills"},
+		{Name: "php", Slug: "php", Description: "checking technical PHP skills"},
+		{Name: "js", Slug: "js", Description: "checking technical JavaScript skills"},
+		{Name: "ts", Slug: "ts", Description: "checking technical TypeScript skills"},
+		{Name: "python", Slug: "python", Description: "checking technical Python skills"},
+		{Name: "vue", Slug: "vue", Description: "checking technical Vue.js skills"},
 	}
 }

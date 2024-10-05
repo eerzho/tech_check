@@ -200,28 +200,49 @@ func (u *User) GetByEmail(ctx context.Context, email string) (*model.User, error
 	return &user, nil
 }
 
-func (u *User) RemoveRole(ctx context.Context, roleID string) error {
-	const op = "mongo_repo.User.RemoveRole"
+func (u *User) HasPermission(ctx context.Context, user *model.User, permissionSlug string) (bool, error) {
+	const op = "mongo_repo.User.HasPermission"
 
-	roleIDObj, err := primitive.ObjectIDFromHex(roleID)
+	if len(user.RoleIDs) == 0 {
+		return false, nil
+	}
+
+	roleFilter := bson.M{
+		"_id": bson.M{"$in": user.RoleIDs},
+	}
+	rolesCursor, err := u.collection.Database().
+		Collection(def.TableRoles.String()).
+		Find(ctx, roleFilter)
 	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+		return false, fmt.Errorf("%s: %w", op, err)
 	}
+	defer rolesCursor.Close(ctx)
 
-	filter := bson.M{
-		"role_ids": roleIDObj,
-	}
-
-	update := bson.M{
-		"$pull": bson.M{
-			"role_ids": roleIDObj,
-		},
-	}
-
-	_, err = u.collection.UpdateMany(ctx, filter, update)
+	var roles []model.Role
+	err = rolesCursor.All(ctx, &roles)
 	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+		return false, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return nil
+	var permissionIDs []primitive.ObjectID
+	for _, role := range roles {
+		permissionIDs = append(permissionIDs, role.PermissionIDs...)
+	}
+
+	if len(permissionIDs) == 0 {
+		return false, nil
+	}
+
+	permissionFilter := bson.M{
+		"_id":  bson.M{"$in": permissionIDs},
+		"slug": permissionSlug,
+	}
+	count, err := u.collection.Database().
+		Collection(def.TablePermissions.String()).
+		CountDocuments(ctx, permissionFilter)
+	if err != nil {
+		return false, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return count > 0, nil
 }

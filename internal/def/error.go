@@ -20,4 +20,5 @@ var (
 	ErrInvalidGoogleData    = errors.New("invalid google data")
 	ErrInvalidGradeValue    = errors.New("invalid grade value")
 	ErrValidation           = errors.New("validation error")
+	ErrAccessDenied         = errors.New("access denied")
 )

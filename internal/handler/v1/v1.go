@@ -15,13 +15,14 @@ func New(mux *http.ServeMux, app *app.App) http.Handler {
 	response.InitBuilder(app.Cfg.IsDebug, app.Lg)
 
 	authMwr := mwr.NewAuth(app.Srvcs.Auth, app.Srvcs.User)
+	permissionMwr := mwr.NewPermission(app.Srvcs.User)
 
-	newUser(mux, authMwr, app.Srvcs.User)
+	newUser(mux, authMwr, permissionMwr, app.Srvcs.User)
 	newAuth(mux, authMwr, app.Srvcs.Auth)
-	newRole(mux, authMwr, app.Srvcs.Role)
-	newPermission(mux, authMwr, app.Srvcs.Permission)
-	newCategory(mux, authMwr, app.Srvcs.Category)
-	newQuestion(mux, authMwr, app.Srvcs.Question)
+	newRole(mux, authMwr, permissionMwr, app.Srvcs.Role)
+	newPermission(mux, authMwr, permissionMwr, app.Srvcs.Permission)
+	newCategory(mux, authMwr, permissionMwr, app.Srvcs.Category)
+	newQuestion(mux, authMwr, permissionMwr, app.Srvcs.Question)
 
 	reqIDMwr := mwr.NewRequestId()
 	reqLgMwr := mwr.NewRequestLogger(app.Lg)

@@ -15,17 +15,22 @@ type permission struct {
 func newPermission(
 	mux *http.ServeMux,
 	authMwr *mwr.Auth,
+	permissionMwr *mwr.Permission,
 	permissionSrvc PermissionSrvc,
 ) {
 	p := permission{
 		permissionSrvc: permissionSrvc,
 	}
 
-	mux.HandleFunc(Url(http.MethodGet, "/permissions"), authMwr.MwrFunc(p.list))
-	mux.HandleFunc(Url(http.MethodPost, "/permissions"), authMwr.MwrFunc(p.create))
-	mux.HandleFunc(Url(http.MethodGet, "/permissions/{id}"), authMwr.MwrFunc(p.show))
-	mux.HandleFunc(Url(http.MethodPatch, "/permissions/{id}"), authMwr.MwrFunc(p.update))
-	mux.HandleFunc(Url(http.MethodDelete, "/permissions/{id}"), authMwr.MwrFunc(p.delete))
+	mux.HandleFunc(
+		Url(http.MethodGet, "/permissions"),
+		authMwr.MwrFunc(permissionMwr.MwrFunc(p.list, "permission-read")),
+	)
+
+	mux.HandleFunc(
+		Url(http.MethodGet, "/permissions/{id}"),
+		authMwr.MwrFunc(permissionMwr.MwrFunc(p.show, "permission-read")),
+	)
 }
 
 // @Summary permissions list
@@ -61,33 +66,6 @@ func (p *permission) list(w http.ResponseWriter, r *http.Request) {
 	response.JsonList(w, r, permissions, pagination)
 }
 
-// @Summary create permission
-// @Tags permissions
-// @Security BearerAuth
-// @Router /v1/permissions [post]
-// @Accept json
-// @Param body body request.PermissionCreate true "permission create request"
-// @Produce json
-// @Success 201 {object} response.success{data=model.Permission}
-func (p *permission) create(w http.ResponseWriter, r *http.Request) {
-	const op = "v1.permission.create"
-
-	var req request.PermissionCreate
-	err := request.ParseBody(r, &req)
-	if err != nil {
-		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
-		return
-	}
-
-	permission, err := p.permissionSrvc.Create(r.Context(), req.Name)
-	if err != nil {
-		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
-		return
-	}
-
-	response.JsonSuccess(w, r, http.StatusCreated, permission)
-}
-
 // @Summary get permission by id
 // @Tags permissions
 // @Security BearerAuth
@@ -106,53 +84,4 @@ func (p *permission) show(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.JsonSuccess(w, r, http.StatusOK, permission)
-}
-
-// @Summary update permission by id
-// @Tags permissions
-// @Security BearerAuth
-// @Router /v1/permissions/{id} [patch]
-// @Accept json
-// @Param id path string true "permission id"
-// @Param body body request.PermissionUpdate true "permission update request"
-// @Produce json
-// @Success 200 {object} response.success{data=model.Permission}
-func (p *permission) update(w http.ResponseWriter, r *http.Request) {
-	const op = "v1.permission.update"
-
-	id := r.PathValue("id")
-	var req request.PermissionUpdate
-
-	err := request.ParseBody(r, &req)
-	if err != nil {
-		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
-		return
-	}
-
-	permission, err := p.permissionSrvc.Update(r.Context(), id, req.Name)
-	if err != nil {
-		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
-		return
-	}
-
-	response.JsonSuccess(w, r, http.StatusOK, permission)
-}
-
-// @Summary delete permission by id
-// @Tags permissions
-// @Security BearerAuth
-// @Router /v1/permissions/{id} [delete]
-// @Param id path string true "permission id"
-// @Success 204
-func (p *permission) delete(w http.ResponseWriter, r *http.Request) {
-	const op = "v1.permission.delete"
-
-	id := r.PathValue("id")
-	err := p.permissionSrvc.Delete(r.Context(), id)
-	if err != nil {
-		response.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
-		return
-	}
-
-	response.JsonSuccess(w, r, http.StatusNoContent, nil)
 }

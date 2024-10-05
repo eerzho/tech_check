@@ -36,10 +36,7 @@ type (
 
 	PermissionSrvc interface {
 		List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]model.Permission, *dto.Pagination, error)
-		Create(ctx context.Context, name string) (*model.Permission, error)
 		GetByID(ctx context.Context, id string) (*model.Permission, error)
-		Delete(ctx context.Context, id string) error
-		Update(ctx context.Context, id, name string) (*model.Permission, error)
 	}
 
 	CategorySrvc interface {
