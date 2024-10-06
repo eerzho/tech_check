@@ -101,6 +101,23 @@ definitions:
       user_id:
         type: string
     type: object
+  model.SessionQuestion:
+    properties:
+      answer:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      session_id:
+        type: string
+      summary:
+        type: string
+      text:
+        type: string
+      updated_at:
+        type: string
+    type: object
   model.User:
     properties:
       avatar:
@@ -244,6 +261,15 @@ definitions:
     required:
     - category_id
     - grade
+    type: object
+  request.SessionQuestionUpdate:
+    properties:
+      answer:
+        maxLength: 500
+        minLength: 1
+        type: string
+    required:
+    - answer
     type: object
   request.UserCreate:
     properties:
@@ -1049,6 +1075,100 @@ paths:
       summary: start test session
       tags:
       - sessions
+  /v1/sessions/{sessionID}/questions:
+    get:
+      parameters:
+      - description: session id
+        in: path
+        name: sessionID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.SessionQuestion'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: get session questions
+      tags:
+      - sessionQuestions
+  /v1/sessions/{sessionID}/questions/{id}:
+    get:
+      parameters:
+      - description: session id
+        in: path
+        name: sessionID
+        required: true
+        type: string
+      - description: session question id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.SessionQuestion'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: get session question by id
+      tags:
+      - sessionQuestions
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: session id
+        in: path
+        name: sessionID
+        required: true
+        type: string
+      - description: session question id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: answer the question request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.SessionQuestionUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.SessionQuestion'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: answer the question
+      tags:
+      - sessionQuestions
   /v1/users:
     get:
       parameters:

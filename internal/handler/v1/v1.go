@@ -24,6 +24,7 @@ func New(mux *http.ServeMux, app *app.App) http.Handler {
 	newCategory(mux, authMwr, permissionMwr, app.Srvcs.Category)
 	newQuestion(mux, authMwr, permissionMwr, app.Srvcs.Question)
 	newSession(mux, authMwr, app.Srvcs.Session)
+	newSessionQuestion(mux, authMwr, app.Srvcs.Session, app.Srvcs.SessionQuestion)
 
 	reqIDMwr := mwr.NewRequestId()
 	reqLgMwr := mwr.NewRequestLogger(app.Lg)

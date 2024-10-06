@@ -57,5 +57,12 @@ type (
 
 	SessionSrvc interface {
 		Create(ctx context.Context, user *model.User, categoryID, grade string) (*model.Session, error)
+		GetByID(ctx context.Context, user *model.User, id string) (*model.Session, error)
+	}
+
+	SessionQuestionSrvc interface {
+		List(ctx context.Context, session *model.Session) ([]model.SessionQuestion, error)
+		GetByID(ctx context.Context, session *model.Session, id string) (*model.SessionQuestion, error)
+		Update(ctx context.Context, session *model.Session, id, answer string) (*model.SessionQuestion, error)
 	}
 )

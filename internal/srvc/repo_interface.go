@@ -64,6 +64,9 @@ type (
 	}
 
 	SessionQuestionRepo interface {
-		Create(ctx context.Context, sessionQuestion *model.SessionQuestion) error
+		Create(ctx context.Context, question *model.SessionQuestion) error
+		List(ctx context.Context, session *model.Session) ([]model.SessionQuestion, error)
+		GetByID(ctx context.Context, session *model.Session, id string) (*model.SessionQuestion, error)
+		Update(ctx context.Context, question *model.SessionQuestion) error
 	}
 )

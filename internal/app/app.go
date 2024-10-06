@@ -100,6 +100,7 @@ func setupServices(cfg *config.Config, repos *repos) *srvcs {
 		Category:     category,
 		Question:     question,
 		Session:      session,
+		SessionQuestion: sessionQuestion,
 	}
 }
 
