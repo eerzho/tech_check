@@ -19,22 +19,26 @@ type (
 	}
 
 	repos struct {
-		User         *mongo_repo.User
-		Role         *mongo_repo.Role
-		Permission   *mongo_repo.Permission
-		RefreshToken *mongo_repo.RefreshToken
-		Category     *mongo_repo.Category
-		Question     *mongo_repo.Question
+		User            *mongo_repo.User
+		Role            *mongo_repo.Role
+		Permission      *mongo_repo.Permission
+		RefreshToken    *mongo_repo.RefreshToken
+		Category        *mongo_repo.Category
+		Question        *mongo_repo.Question
+		Session         *mongo_repo.Session
+		SessionQuestion *mongo_repo.SessionQuestion
 	}
 
 	srvcs struct {
-		User         *srvc.User
-		Role         *srvc.Role
-		Permission   *srvc.Permission
-		RefreshToken *srvc.RefreshToken
-		Auth         *srvc.Auth
-		Category     *srvc.Category
-		Question     *srvc.Question
+		User            *srvc.User
+		Role            *srvc.Role
+		Permission      *srvc.Permission
+		RefreshToken    *srvc.RefreshToken
+		Auth            *srvc.Auth
+		Category        *srvc.Category
+		Question        *srvc.Question
+		Session         *srvc.Session
+		SessionQuestion *srvc.SessionQuestion
 	}
 )
 
@@ -61,14 +65,18 @@ func setupRepositories(mng *mongo.Database) *repos {
 	refreshToken := mongo_repo.NewRefreshToken(mng)
 	category := mongo_repo.NewCategory(mng)
 	question := mongo_repo.NewQuestion(mng)
+	session := mongo_repo.NewSession(mng)
+	sessionQuestion := mongo_repo.NewSessionQuestion(mng)
 
 	return &repos{
-		User:         user,
-		Role:         role,
-		Permission:   permission,
-		RefreshToken: refreshToken,
-		Category:     category,
-		Question:     question,
+		User:            user,
+		Role:            role,
+		Permission:      permission,
+		RefreshToken:    refreshToken,
+		Category:        category,
+		Question:        question,
+		Session:         session,
+		SessionQuestion: sessionQuestion,
 	}
 }
 
@@ -80,6 +88,8 @@ func setupServices(cfg *config.Config, repos *repos) *srvcs {
 	auth := srvc.NewAuth(cfg.Google.ClientID, cfg.JWT.Secret, user, refreshToken)
 	category := srvc.NewCategory(repos.Category)
 	question := srvc.NewQuestion(repos.Question, category)
+	sessionQuestion := srvc.NewSessionQuestion(repos.SessionQuestion)
+	session := srvc.NewSession(repos.Session, category, question, sessionQuestion)
 
 	return &srvcs{
 		User:         user,
@@ -89,6 +99,7 @@ func setupServices(cfg *config.Config, repos *repos) *srvcs {
 		Auth:         auth,
 		Category:     category,
 		Question:     question,
+		Session:      session,
 	}
 }
 

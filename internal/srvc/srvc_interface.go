@@ -30,4 +30,12 @@ type (
 	CategorySrvc interface {
 		GetByID(ctx context.Context, id string) (*model.Category, error)
 	}
+
+	QuestionSrvc interface {
+		GetRandom(ctx context.Context, category *model.Category, grade string, count int) ([]model.Question, error)
+	}
+
+	SessionQuestionSrvc interface {
+		Create(ctx context.Context, session *model.Session, text string) (*model.SessionQuestion, error)
+	}
 )

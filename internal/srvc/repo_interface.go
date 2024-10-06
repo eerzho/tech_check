@@ -2,6 +2,7 @@ package srvc
 
 import (
 	"context"
+	"tech_check/internal/def"
 	"tech_check/internal/dto"
 	"tech_check/internal/model"
 )
@@ -53,5 +54,16 @@ type (
 		GetByID(ctx context.Context, id string) (*model.Question, error)
 		Update(ctx context.Context, question *model.Question) error
 		Delete(ctx context.Context, id string) error
+		GetRandom(ctx context.Context, category *model.Category, grade def.GradeName, count int) ([]model.Question, error)
+	}
+
+	SessionRepo interface {
+		Create(ctx context.Context, session *model.Session) error
+		IsExistsActive(ctx context.Context, user *model.User) (bool, error)
+		GetByID(ctx context.Context, id string) (*model.Session, error)
+	}
+
+	SessionQuestionRepo interface {
+		Create(ctx context.Context, sessionQuestion *model.SessionQuestion) error
 	}
 )

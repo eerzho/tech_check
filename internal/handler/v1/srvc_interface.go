@@ -54,4 +54,8 @@ type (
 		Update(ctx context.Context, id, grade, text string) (*model.Question, error)
 		Delete(ctx context.Context, id string) error
 	}
+
+	SessionSrvc interface {
+		Create(ctx context.Context, user *model.User, categoryID, grade string) (*model.Session, error)
+	}
 )

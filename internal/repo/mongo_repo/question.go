@@ -185,3 +185,29 @@ func (q *Question) Delete(ctx context.Context, id string) error {
 
 	return nil
 }
+
+func (q *Question) GetRandom(ctx context.Context, category *model.Category, grade def.GradeName, count int) ([]model.Question, error) {
+	const op = "mongo_repo.Question.GetRandom"
+
+	filter := bson.M{
+		"grade":       grade,
+		"category_id": category.ID,
+	}
+	pipeline := mongo.Pipeline{
+		{{Key: "$match", Value: filter}},
+		{{Key: "$sample", Value: bson.M{"size": count}}},
+	}
+	cursor, err := q.collection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer cursor.Close(ctx)
+
+	var questions []model.Question
+	err = cursor.All(ctx, &questions)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return questions, nil
+}

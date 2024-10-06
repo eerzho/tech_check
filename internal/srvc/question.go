@@ -95,7 +95,7 @@ func (q *Question) Update(ctx context.Context, id, text, grade string) (*model.Q
 }
 
 func (q *Question) Delete(ctx context.Context, id string) error {
-	const op = "srvq.Question.Delete"
+	const op = "srvc.Question.Delete"
 
 	err := q.questionRepo.Delete(ctx, id)
 	if err != nil {
@@ -103,4 +103,20 @@ func (q *Question) Delete(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (q *Question) GetRandom(ctx context.Context, category *model.Category, grade string, count int) ([]model.Question, error) {
+	const op = "srvc.Question.GetRandom"
+
+	gradeObj, err := def.ValidateGradeName(grade)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	questions, err := q.questionRepo.GetRandom(ctx, category, gradeObj, count)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return questions, nil
 }

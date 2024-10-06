@@ -1267,6 +1267,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/sessions": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sessions"
+                ],
+                "summary": "start test session",
+                "parameters": [
+                    {
+                        "description": "session create request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.SessionCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.success"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Session"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/v1/users": {
             "get": {
                 "security": [
@@ -1751,6 +1798,29 @@ const docTemplate = `{
                 }
             }
         },
+        "model.Session": {
+            "type": "object",
+            "properties": {
+                "category_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "finished_at": {
+                    "type": "string"
+                },
+                "grade": {
+                    "$ref": "#/definitions/def.GradeName"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "model.User": {
             "type": "object",
             "properties": {
@@ -1933,6 +2003,26 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 50,
                     "minLength": 5
+                }
+            }
+        },
+        "request.SessionCreate": {
+            "type": "object",
+            "required": [
+                "category_id",
+                "grade"
+            ],
+            "properties": {
+                "category_id": {
+                    "type": "string"
+                },
+                "grade": {
+                    "type": "string",
+                    "enum": [
+                        "junior",
+                        "middle",
+                        "senior"
+                    ]
                 }
             }
         },

@@ -21,4 +21,6 @@ var (
 	ErrInvalidGradeValue    = errors.New("invalid grade value")
 	ErrValidation           = errors.New("validation error")
 	ErrAccessDenied         = errors.New("access denied")
+	ErrUserHasActiveSession = errors.New("user has active session")
+	ErrQuestionNotEnough    = errors.New("questions not enough")
 )
