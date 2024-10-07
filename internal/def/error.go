@@ -23,4 +23,5 @@ var (
 	ErrAccessDenied         = errors.New("access denied")
 	ErrUserHasActiveSession = errors.New("user has active session")
 	ErrQuestionNotEnough    = errors.New("questions not enough")
+	ErrSessionFinished      = errors.New("session finished")
 )

@@ -98,6 +98,8 @@ definitions:
         $ref: '#/definitions/def.GradeName'
       id:
         type: string
+      summary:
+        type: string
       user_id:
         type: string
     type: object
@@ -1050,6 +1052,37 @@ paths:
       tags:
       - roles
   /v1/sessions:
+    get:
+      parameters:
+      - description: page
+        in: query
+        name: pagination[page]
+        type: integer
+      - description: count
+        in: query
+        name: pagination[count]
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.list'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Session'
+                  type: array
+                pagination:
+                  $ref: '#/definitions/dto.Pagination'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: get session list for auth user
+      tags:
+      - sessions
     post:
       parameters:
       - description: session create request
@@ -1073,6 +1106,56 @@ paths:
       security:
       - BearerAuth: []
       summary: start test session
+      tags:
+      - sessions
+  /v1/sessions/{id}/cancel:
+    post:
+      parameters:
+      - description: session id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Session'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: finish the session without summary
+      tags:
+      - sessions
+  /v1/sessions/{id}/summarize:
+    post:
+      parameters:
+      - description: session id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.success'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Session'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: finish the session with summary
       tags:
       - sessions
   /v1/sessions/{sessionID}/questions:

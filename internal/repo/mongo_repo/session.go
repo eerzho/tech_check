@@ -5,21 +5,25 @@ import (
 	"errors"
 	"fmt"
 	"tech_check/internal/def"
+	"tech_check/internal/dto"
 	"tech_check/internal/model"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Session struct {
-	collection *mongo.Collection
+	maxListCount int
+	collection   *mongo.Collection
 }
 
 func NewSession(db *mongo.Database) *Session {
 	return &Session{
-		collection: db.Collection(def.TableSessions.String()),
+		maxListCount: 200,
+		collection:   db.Collection(def.TableSessions.String()),
 	}
 }
 
@@ -71,4 +75,67 @@ func (s *Session) GetByID(ctx context.Context, id string) (*model.Session, error
 	}
 
 	return &session, nil
+}
+
+func (s *Session) List(ctx context.Context, user *model.User, page, count int) ([]model.Session, *dto.Pagination, error) {
+	const op = "mongo_repo.Session.List"
+
+	if count > s.maxListCount {
+		count = s.maxListCount
+	}
+
+	filter := bson.M{"user_id": user.ID}
+	sort := bson.D{{Key: "created_at", Value: -1}}
+
+	findOptions := options.Find()
+	findOptions.SetSkip(int64((page - 1) * count))
+	findOptions.SetLimit(int64(count))
+	findOptions.SetSort(sort)
+
+	cursor, err := s.collection.Find(ctx, filter, findOptions)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer cursor.Close(ctx)
+
+	var sessions []model.Session
+	err = cursor.All(ctx, &sessions)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	total, err := s.collection.CountDocuments(ctx, filter)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	pagination := dto.Pagination{
+		Page:  page,
+		Count: count,
+		Total: int(total),
+	}
+
+	return sessions, &pagination, nil
+}
+
+func (s *Session) Update(ctx context.Context, session *model.Session) error {
+	const op = "mongo_repo.Session.Update"
+
+	filter := bson.M{"_id": session.ID}
+	update := bson.M{
+		"$set": bson.M{
+			"summary":     session.Summary,
+			"finished_at": session.FinishedAt,
+		},
+	}
+	result, err := s.collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	if result.MatchedCount == 0 {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
 }

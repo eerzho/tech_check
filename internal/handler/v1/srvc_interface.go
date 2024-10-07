@@ -56,8 +56,11 @@ type (
 	}
 
 	SessionSrvc interface {
+		List(ctx context.Context, user *model.User, page, count int) ([]model.Session, *dto.Pagination, error)
 		Create(ctx context.Context, user *model.User, categoryID, grade string) (*model.Session, error)
 		GetByID(ctx context.Context, user *model.User, id string) (*model.Session, error)
+		Summarize(ctx context.Context, user *model.User, id string) (*model.Session, error)
+		Cancel(ctx context.Context, user *model.User, id string) (*model.Session, error)
 	}
 
 	SessionQuestionSrvc interface {

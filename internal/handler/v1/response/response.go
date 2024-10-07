@@ -101,7 +101,8 @@ func (b *Builder) getCode(err error) int {
 	} else if errors.Is(err, def.ErrAlreadyExists) ||
 		errors.Is(err, def.ErrInvalidBody) ||
 		errors.Is(err, def.ErrUserHasActiveSession) ||
-		errors.Is(err, def.ErrQuestionNotEnough) {
+		errors.Is(err, def.ErrQuestionNotEnough) ||
+		errors.Is(err, def.ErrSessionFinished) {
 		code = http.StatusBadRequest
 	} else if errors.Is(err, def.ErrInvalidCredentials) ||
 		errors.Is(err, def.ErrAuthMissing) ||
