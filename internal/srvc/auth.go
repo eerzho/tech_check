@@ -169,7 +169,7 @@ func (a *Auth) validateCredential(ctx context.Context, email, password string) (
 func (a *Auth) createRToken(ctx context.Context, user *model.User, ip string) (*model.RefreshToken, string, error) {
 	const op = "srvc.Auth.createRToken"
 
-	err := a.refreshTokenSrvc.DeleteByUser(ctx, user)
+	err := a.refreshTokenSrvc.Delete(ctx, user)
 	if err != nil && !errors.Is(err, def.ErrNotFound) {
 		return nil, "", fmt.Errorf("%s: %w", op, err)
 	}
@@ -186,7 +186,7 @@ func (a *Auth) createRToken(ctx context.Context, user *model.User, ip string) (*
 		return nil, "", fmt.Errorf("%s: %w", op, err)
 	}
 
-	refreshToken, err := a.refreshTokenSrvc.CreateByUser(
+	refreshToken, err := a.refreshTokenSrvc.Create(
 		ctx,
 		user,
 		ip,
@@ -226,7 +226,7 @@ func (a *Auth) getSigningKey(token *jwt.Token) (interface{}, error) {
 func (a *Auth) validateRToken(ctx context.Context, user *model.User, refreshTokenID, rToken string) error {
 	const op = "srvc.Auth.validateRToken"
 
-	refreshToken, err := a.refreshTokenSrvc.GetByUserAndID(ctx, user, refreshTokenID)
+	refreshToken, err := a.refreshTokenSrvc.GetByID(ctx, user, refreshTokenID)
 	if err != nil {
 		if errors.Is(err, def.ErrNotFound) {
 			return fmt.Errorf("%s: %w", op, def.ErrTokensMismatch)

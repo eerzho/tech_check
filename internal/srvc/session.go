@@ -46,7 +46,7 @@ func (s *Session) List(ctx context.Context, user *model.User, page, count int) (
 func (s *Session) Create(ctx context.Context, user *model.User, categoryID, grade string) (*model.Session, error) {
 	const op = "srvc.Session.Create"
 
-	exists, err := s.sessionRepo.IsExistsActive(ctx, user)
+	exists, err := s.sessionRepo.ExistsActive(ctx, user)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

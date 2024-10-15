@@ -40,8 +40,8 @@ func (s *Session) Create(ctx context.Context, session *model.Session) error {
 	return nil
 }
 
-func (s *Session) IsExistsActive(ctx context.Context, user *model.User) (bool, error) {
-	const op = "mongo_repo.Session.IsExistsActive"
+func (s *Session) ExistsActive(ctx context.Context, user *model.User) (bool, error) {
+	const op = "mongo_repo.Session.ExistsActive"
 
 	filter := bson.M{
 		"user_id":     user.ID,

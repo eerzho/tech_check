@@ -23,7 +23,7 @@ func NewRefreshToken(db *mongo.Database) *RefreshToken {
 	}
 }
 
-func (r *RefreshToken) DeleteByUser(ctx context.Context, user *model.User) error {
+func (r *RefreshToken) Delete(ctx context.Context, user *model.User) error {
 	const op = "mongo_repo.RefreshToken.DeleteByUser"
 
 	filter := bson.M{"user_id": user.ID}
@@ -54,8 +54,8 @@ func (r *RefreshToken) Create(ctx context.Context, refreshToken *model.RefreshTo
 	return nil
 }
 
-func (r *RefreshToken) GetByUserAndID(ctx context.Context, user *model.User, id string) (*model.RefreshToken, error) {
-	const op = "mongo_repo.RefreshToken.GetByUserAndID"
+func (r *RefreshToken) GetByID(ctx context.Context, user *model.User, id string) (*model.RefreshToken, error) {
+	const op = "mongo_repo.RefreshToken.GetByID"
 
 	idObj, err := primitive.ObjectIDFromHex(id)
 	if err != nil {

@@ -166,8 +166,8 @@ func (u *User) Delete(ctx context.Context, id string) error {
 	return nil
 }
 
-func (u *User) IsExistsEmail(ctx context.Context, email string) (bool, error) {
-	const op = "mongo_repo.User.IsExistsEmail"
+func (u *User) ExistsByEmail(ctx context.Context, email string) (bool, error) {
+	const op = "mongo_repo.User.ExistsByEmail"
 
 	filter := bson.M{"email": email}
 

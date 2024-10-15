@@ -11,16 +11,18 @@ type RefreshToken struct {
 	refreshTokenRepo RefreshTokenRepo
 }
 
-func NewRefreshToken(refreshTokenRepo RefreshTokenRepo) *RefreshToken {
+func NewRefreshToken(
+	refreshTokenRepo RefreshTokenRepo,
+) *RefreshToken {
 	return &RefreshToken{
 		refreshTokenRepo: refreshTokenRepo,
 	}
 }
 
-func (r *RefreshToken) DeleteByUser(ctx context.Context, user *model.User) error {
-	const op = "srvc.RefreshToken.DeleteByUser"
+func (r *RefreshToken) Delete(ctx context.Context, user *model.User) error {
+	const op = "srvc.RefreshToken.Delete"
 
-	err := r.refreshTokenRepo.DeleteByUser(ctx, user)
+	err := r.refreshTokenRepo.Delete(ctx, user)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -28,8 +30,8 @@ func (r *RefreshToken) DeleteByUser(ctx context.Context, user *model.User) error
 	return nil
 }
 
-func (r *RefreshToken) CreateByUser(ctx context.Context, user *model.User, ip, hash string, expiresAt time.Time) (*model.RefreshToken, error) {
-	const op = "srvc.RefreshToken.CreateByUser"
+func (r *RefreshToken) Create(ctx context.Context, user *model.User, ip, hash string, expiresAt time.Time) (*model.RefreshToken, error) {
+	const op = "srvc.RefreshToken.Create"
 
 	refreshToken := model.RefreshToken{
 		UserID:    user.ID,
@@ -45,10 +47,10 @@ func (r *RefreshToken) CreateByUser(ctx context.Context, user *model.User, ip, h
 	return &refreshToken, nil
 }
 
-func (r *RefreshToken) GetByUserAndID(ctx context.Context, user *model.User, id string) (*model.RefreshToken, error) {
-	const op = "srvc.RefreshToken.GetByUserAndID"
+func (r *RefreshToken) GetByID(ctx context.Context, user *model.User, id string) (*model.RefreshToken, error) {
+	const op = "srvc.RefreshToken.GetByID"
 
-	refreshToken, err := r.refreshTokenRepo.GetByUserAndID(ctx, user, id)
+	refreshToken, err := r.refreshTokenRepo.GetByID(ctx, user, id)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

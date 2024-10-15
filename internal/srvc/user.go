@@ -40,7 +40,7 @@ func (u *User) List(ctx context.Context, page, count int, filters, sorts map[str
 func (u *User) Create(ctx context.Context, email, name, password string) (*model.User, error) {
 	const op = "srvc.User.Create"
 
-	exists, err := u.userRepo.IsExistsEmail(ctx, email)
+	exists, err := u.userRepo.ExistsByEmail(ctx, email)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

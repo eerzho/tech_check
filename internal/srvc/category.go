@@ -13,7 +13,9 @@ type Category struct {
 	categoryRepo CategoryRepo
 }
 
-func NewCategory(categoryRepo CategoryRepo) *Category {
+func NewCategory(
+	categoryRepo CategoryRepo,
+) *Category {
 	return &Category{
 		categoryRepo: categoryRepo,
 	}
