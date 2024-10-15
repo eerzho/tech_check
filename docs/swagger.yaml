@@ -1,6 +1,6 @@
 basePath: /api
 definitions:
-  def.GradeName:
+  constants.GradeName:
     enum:
     - junior
     - middle
@@ -26,7 +26,7 @@ definitions:
       refresh_token:
         type: string
     type: object
-  model.Category:
+  models.Category:
     properties:
       created_at:
         type: string
@@ -41,7 +41,7 @@ definitions:
       updated_at:
         type: string
     type: object
-  model.Permission:
+  models.Permission:
     properties:
       created_at:
         type: string
@@ -54,14 +54,14 @@ definitions:
       updated_at:
         type: string
     type: object
-  model.Question:
+  models.Question:
     properties:
       category_id:
         type: string
       created_at:
         type: string
       grade:
-        $ref: '#/definitions/def.GradeName'
+        $ref: '#/definitions/constants.GradeName'
       id:
         type: string
       text:
@@ -69,7 +69,7 @@ definitions:
       updated_at:
         type: string
     type: object
-  model.Role:
+  models.Role:
     properties:
       created_at:
         type: string
@@ -86,7 +86,7 @@ definitions:
       updated_at:
         type: string
     type: object
-  model.Session:
+  models.Session:
     properties:
       category_id:
         type: string
@@ -95,7 +95,7 @@ definitions:
       finished_at:
         type: string
       grade:
-        $ref: '#/definitions/def.GradeName'
+        $ref: '#/definitions/constants.GradeName'
       id:
         type: string
       summary:
@@ -103,7 +103,7 @@ definitions:
       user_id:
         type: string
     type: object
-  model.SessionQuestion:
+  models.SessionQuestion:
     properties:
       answer:
         type: string
@@ -120,7 +120,7 @@ definitions:
       updated_at:
         type: string
     type: object
-  model.User:
+  models.User:
     properties:
       avatar:
         type: string
@@ -139,7 +139,7 @@ definitions:
       updated_at:
         type: string
     type: object
-  request.CategoryCreate:
+  requests.CategoryCreate:
     properties:
       description:
         maxLength: 500
@@ -153,7 +153,7 @@ definitions:
     - description
     - name
     type: object
-  request.CategoryUpdate:
+  requests.CategoryUpdate:
     properties:
       description:
         maxLength: 500
@@ -167,14 +167,14 @@ definitions:
     - description
     - name
     type: object
-  request.GoogleLogin:
+  requests.GoogleLogin:
     properties:
       token_id:
         type: string
     required:
     - token_id
     type: object
-  request.Login:
+  requests.Login:
     properties:
       email:
         maxLength: 50
@@ -187,7 +187,7 @@ definitions:
     - email
     - password
     type: object
-  request.QuestionCreate:
+  requests.QuestionCreate:
     properties:
       category_id:
         type: string
@@ -206,7 +206,7 @@ definitions:
     - grade
     - text
     type: object
-  request.QuestionUpdate:
+  requests.QuestionUpdate:
     properties:
       grade:
         enum:
@@ -222,7 +222,7 @@ definitions:
     - grade
     - text
     type: object
-  request.Refresh:
+  requests.Refresh:
     properties:
       access_token:
         type: string
@@ -232,7 +232,7 @@ definitions:
     - access_token
     - refresh_token
     type: object
-  request.RoleCreate:
+  requests.RoleCreate:
     properties:
       name:
         maxLength: 50
@@ -241,7 +241,7 @@ definitions:
     required:
     - name
     type: object
-  request.RoleUpdate:
+  requests.RoleUpdate:
     properties:
       name:
         maxLength: 50
@@ -250,7 +250,7 @@ definitions:
     required:
     - name
     type: object
-  request.SessionCreate:
+  requests.SessionCreate:
     properties:
       category_id:
         type: string
@@ -264,7 +264,7 @@ definitions:
     - category_id
     - grade
     type: object
-  request.SessionQuestionUpdate:
+  requests.SessionQuestionUpdate:
     properties:
       answer:
         maxLength: 500
@@ -273,7 +273,7 @@ definitions:
     required:
     - answer
     type: object
-  request.UserCreate:
+  requests.UserCreate:
     properties:
       email:
         maxLength: 50
@@ -290,7 +290,7 @@ definitions:
     - name
     - password
     type: object
-  request.UserUpdate:
+  requests.UserUpdate:
     properties:
       name:
         maxLength: 50
@@ -298,12 +298,12 @@ definitions:
     required:
     - name
     type: object
-  response.list:
+  responses.list:
     properties:
       data: {}
       pagination: {}
     type: object
-  response.success:
+  responses.success:
     properties:
       data: {}
     type: object
@@ -321,10 +321,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.User'
+                  $ref: '#/definitions/models.User'
               type: object
       security:
       - BearerAuth: []
@@ -340,7 +340,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/request.Login'
+          $ref: '#/definitions/requests.Login'
       produces:
       - application/json
       responses:
@@ -348,7 +348,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
                   $ref: '#/definitions/dto.Token'
@@ -366,7 +366,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/request.GoogleLogin'
+          $ref: '#/definitions/requests.GoogleLogin'
       produces:
       - application/json
       responses:
@@ -374,7 +374,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
                   $ref: '#/definitions/dto.Token'
@@ -392,7 +392,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/request.Refresh'
+          $ref: '#/definitions/requests.Refresh'
       produces:
       - application/json
       responses:
@@ -400,7 +400,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
                   $ref: '#/definitions/dto.Token'
@@ -466,11 +466,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.list'
+            - $ref: '#/definitions/responses.list'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/model.Category'
+                    $ref: '#/definitions/models.Category'
                   type: array
                 pagination:
                   $ref: '#/definitions/dto.Pagination'
@@ -489,7 +489,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/request.CategoryCreate'
+          $ref: '#/definitions/requests.CategoryCreate'
       produces:
       - application/json
       responses:
@@ -497,10 +497,10 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Category'
+                  $ref: '#/definitions/models.Category'
               type: object
       security:
       - BearerAuth: []
@@ -537,10 +537,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Category'
+                  $ref: '#/definitions/models.Category'
               type: object
       security:
       - BearerAuth: []
@@ -561,7 +561,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/request.CategoryUpdate'
+          $ref: '#/definitions/requests.CategoryUpdate'
       produces:
       - application/json
       responses:
@@ -569,10 +569,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Category'
+                  $ref: '#/definitions/models.Category'
               type: object
       security:
       - BearerAuth: []
@@ -633,11 +633,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.list'
+            - $ref: '#/definitions/responses.list'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/model.Permission'
+                    $ref: '#/definitions/models.Permission'
                   type: array
                 pagination:
                   $ref: '#/definitions/dto.Pagination'
@@ -662,10 +662,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Permission'
+                  $ref: '#/definitions/models.Permission'
               type: object
       security:
       - BearerAuth: []
@@ -716,11 +716,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.list'
+            - $ref: '#/definitions/responses.list'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/model.Question'
+                    $ref: '#/definitions/models.Question'
                   type: array
                 pagination:
                   $ref: '#/definitions/dto.Pagination'
@@ -739,7 +739,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/request.QuestionCreate'
+          $ref: '#/definitions/requests.QuestionCreate'
       produces:
       - application/json
       responses:
@@ -747,10 +747,10 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Question'
+                  $ref: '#/definitions/models.Question'
               type: object
       security:
       - BearerAuth: []
@@ -787,10 +787,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Question'
+                  $ref: '#/definitions/models.Question'
               type: object
       security:
       - BearerAuth: []
@@ -811,7 +811,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/request.QuestionUpdate'
+          $ref: '#/definitions/requests.QuestionUpdate'
       produces:
       - application/json
       responses:
@@ -819,10 +819,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Question'
+                  $ref: '#/definitions/models.Question'
               type: object
       security:
       - BearerAuth: []
@@ -883,11 +883,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.list'
+            - $ref: '#/definitions/responses.list'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/model.Role'
+                    $ref: '#/definitions/models.Role'
                   type: array
                 pagination:
                   $ref: '#/definitions/dto.Pagination'
@@ -906,7 +906,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/request.RoleCreate'
+          $ref: '#/definitions/requests.RoleCreate'
       produces:
       - application/json
       responses:
@@ -914,10 +914,10 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Role'
+                  $ref: '#/definitions/models.Role'
               type: object
       security:
       - BearerAuth: []
@@ -954,10 +954,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Role'
+                  $ref: '#/definitions/models.Role'
               type: object
       security:
       - BearerAuth: []
@@ -978,7 +978,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/request.RoleUpdate'
+          $ref: '#/definitions/requests.RoleUpdate'
       produces:
       - application/json
       responses:
@@ -986,10 +986,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Role'
+                  $ref: '#/definitions/models.Role'
               type: object
       security:
       - BearerAuth: []
@@ -1014,10 +1014,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Role'
+                  $ref: '#/definitions/models.Role'
               type: object
       security:
       - BearerAuth: []
@@ -1041,10 +1041,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Role'
+                  $ref: '#/definitions/models.Role'
               type: object
       security:
       - BearerAuth: []
@@ -1069,11 +1069,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.list'
+            - $ref: '#/definitions/responses.list'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/model.Session'
+                    $ref: '#/definitions/models.Session'
                   type: array
                 pagination:
                   $ref: '#/definitions/dto.Pagination'
@@ -1090,7 +1090,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/request.SessionCreate'
+          $ref: '#/definitions/requests.SessionCreate'
       produces:
       - application/json
       responses:
@@ -1098,10 +1098,10 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Session'
+                  $ref: '#/definitions/models.Session'
               type: object
       security:
       - BearerAuth: []
@@ -1123,10 +1123,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Session'
+                  $ref: '#/definitions/models.Session'
               type: object
       security:
       - BearerAuth: []
@@ -1148,10 +1148,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Session'
+                  $ref: '#/definitions/models.Session'
               type: object
       security:
       - BearerAuth: []
@@ -1173,11 +1173,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/model.SessionQuestion'
+                    $ref: '#/definitions/models.SessionQuestion'
                   type: array
               type: object
       security:
@@ -1205,10 +1205,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.SessionQuestion'
+                  $ref: '#/definitions/models.SessionQuestion'
               type: object
       security:
       - BearerAuth: []
@@ -1234,7 +1234,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/request.SessionQuestionUpdate'
+          $ref: '#/definitions/requests.SessionQuestionUpdate'
       produces:
       - application/json
       responses:
@@ -1242,10 +1242,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.SessionQuestion'
+                  $ref: '#/definitions/models.SessionQuestion'
               type: object
       security:
       - BearerAuth: []
@@ -1292,11 +1292,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.list'
+            - $ref: '#/definitions/responses.list'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/model.User'
+                    $ref: '#/definitions/models.User'
                   type: array
                 pagination:
                   $ref: '#/definitions/dto.Pagination'
@@ -1315,7 +1315,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/request.UserCreate'
+          $ref: '#/definitions/requests.UserCreate'
       produces:
       - application/json
       responses:
@@ -1323,10 +1323,10 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.User'
+                  $ref: '#/definitions/models.User'
               type: object
       summary: registration
       tags:
@@ -1361,10 +1361,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.User'
+                  $ref: '#/definitions/models.User'
               type: object
       security:
       - BearerAuth: []
@@ -1385,7 +1385,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/request.UserUpdate'
+          $ref: '#/definitions/requests.UserUpdate'
       produces:
       - application/json
       responses:
@@ -1393,10 +1393,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.User'
+                  $ref: '#/definitions/models.User'
               type: object
       security:
       - BearerAuth: []
@@ -1421,10 +1421,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.User'
+                  $ref: '#/definitions/models.User'
               type: object
       security:
       - BearerAuth: []
@@ -1448,10 +1448,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.success'
+            - $ref: '#/definitions/responses.success'
             - properties:
                 data:
-                  $ref: '#/definitions/model.User'
+                  $ref: '#/definitions/models.User'
               type: object
       security:
       - BearerAuth: []

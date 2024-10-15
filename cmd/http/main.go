@@ -9,7 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 	"tech_check/internal/app"
-	"tech_check/internal/handler"
+	"tech_check/internal/handlers"
 	"time"
 )
 
@@ -29,7 +29,7 @@ func main() {
 func setup(app *app.App) *http.Server {
 	return &http.Server{
 		Addr:    fmt.Sprintf(":%s", app.Cfg.HTTP.Port),
-		Handler: handler.New(app),
+		Handler: handlers.New(app),
 	}
 }
 

@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"tech_check/internal/model"
+	"tech_check/internal/models"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -29,8 +29,8 @@ func NewToken(aToken, rToken string) *Token {
 }
 
 func NewClaims(
-	user *model.User,
-	refreshToken *model.RefreshToken,
+	user *models.User,
+	refreshToken *models.RefreshToken,
 	ip string,
 	aTokenExpiresHour int,
 ) *Claims {

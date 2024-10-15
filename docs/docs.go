@@ -35,13 +35,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.User"
+                                            "$ref": "#/definitions/models.User"
                                         }
                                     }
                                 }
@@ -68,7 +68,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.Login"
+                            "$ref": "#/definitions/requests.Login"
                         }
                     }
                 ],
@@ -78,7 +78,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
@@ -113,7 +113,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.GoogleLogin"
+                            "$ref": "#/definitions/requests.GoogleLogin"
                         }
                     }
                 ],
@@ -123,7 +123,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
@@ -158,7 +158,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.Refresh"
+                            "$ref": "#/definitions/requests.Refresh"
                         }
                     }
                 ],
@@ -168,7 +168,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
@@ -276,7 +276,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.list"
+                                    "$ref": "#/definitions/responses.list"
                                 },
                                 {
                                     "type": "object",
@@ -284,7 +284,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.Category"
+                                                "$ref": "#/definitions/models.Category"
                                             }
                                         },
                                         "pagination": {
@@ -320,7 +320,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.CategoryCreate"
+                            "$ref": "#/definitions/requests.CategoryCreate"
                         }
                     }
                 ],
@@ -330,13 +330,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Category"
+                                            "$ref": "#/definitions/models.Category"
                                         }
                                     }
                                 }
@@ -375,13 +375,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Category"
+                                            "$ref": "#/definitions/models.Category"
                                         }
                                     }
                                 }
@@ -445,7 +445,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.CategoryUpdate"
+                            "$ref": "#/definitions/requests.CategoryUpdate"
                         }
                     }
                 ],
@@ -455,13 +455,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Category"
+                                            "$ref": "#/definitions/models.Category"
                                         }
                                     }
                                 }
@@ -557,7 +557,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.list"
+                                    "$ref": "#/definitions/responses.list"
                                 },
                                 {
                                     "type": "object",
@@ -565,7 +565,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.Permission"
+                                                "$ref": "#/definitions/models.Permission"
                                             }
                                         },
                                         "pagination": {
@@ -608,13 +608,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Permission"
+                                            "$ref": "#/definitions/models.Permission"
                                         }
                                     }
                                 }
@@ -695,7 +695,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.list"
+                                    "$ref": "#/definitions/responses.list"
                                 },
                                 {
                                     "type": "object",
@@ -703,7 +703,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.Question"
+                                                "$ref": "#/definitions/models.Question"
                                             }
                                         },
                                         "pagination": {
@@ -739,7 +739,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.QuestionCreate"
+                            "$ref": "#/definitions/requests.QuestionCreate"
                         }
                     }
                 ],
@@ -749,13 +749,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Question"
+                                            "$ref": "#/definitions/models.Question"
                                         }
                                     }
                                 }
@@ -794,13 +794,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Question"
+                                            "$ref": "#/definitions/models.Question"
                                         }
                                     }
                                 }
@@ -864,7 +864,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.QuestionUpdate"
+                            "$ref": "#/definitions/requests.QuestionUpdate"
                         }
                     }
                 ],
@@ -874,13 +874,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Question"
+                                            "$ref": "#/definitions/models.Question"
                                         }
                                     }
                                 }
@@ -976,7 +976,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.list"
+                                    "$ref": "#/definitions/responses.list"
                                 },
                                 {
                                     "type": "object",
@@ -984,7 +984,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.Role"
+                                                "$ref": "#/definitions/models.Role"
                                             }
                                         },
                                         "pagination": {
@@ -1020,7 +1020,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.RoleCreate"
+                            "$ref": "#/definitions/requests.RoleCreate"
                         }
                     }
                 ],
@@ -1030,13 +1030,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Role"
+                                            "$ref": "#/definitions/models.Role"
                                         }
                                     }
                                 }
@@ -1075,13 +1075,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Role"
+                                            "$ref": "#/definitions/models.Role"
                                         }
                                     }
                                 }
@@ -1145,7 +1145,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.RoleUpdate"
+                            "$ref": "#/definitions/requests.RoleUpdate"
                         }
                     }
                 ],
@@ -1155,13 +1155,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Role"
+                                            "$ref": "#/definitions/models.Role"
                                         }
                                     }
                                 }
@@ -1204,13 +1204,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Role"
+                                            "$ref": "#/definitions/models.Role"
                                         }
                                     }
                                 }
@@ -1251,13 +1251,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Role"
+                                            "$ref": "#/definitions/models.Role"
                                         }
                                     }
                                 }
@@ -1301,7 +1301,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.list"
+                                    "$ref": "#/definitions/responses.list"
                                 },
                                 {
                                     "type": "object",
@@ -1309,7 +1309,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.Session"
+                                                "$ref": "#/definitions/models.Session"
                                             }
                                         },
                                         "pagination": {
@@ -1342,7 +1342,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.SessionCreate"
+                            "$ref": "#/definitions/requests.SessionCreate"
                         }
                     }
                 ],
@@ -1352,13 +1352,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Session"
+                                            "$ref": "#/definitions/models.Session"
                                         }
                                     }
                                 }
@@ -1397,13 +1397,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Session"
+                                            "$ref": "#/definitions/models.Session"
                                         }
                                     }
                                 }
@@ -1442,13 +1442,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Session"
+                                            "$ref": "#/definitions/models.Session"
                                         }
                                     }
                                 }
@@ -1487,7 +1487,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
@@ -1495,7 +1495,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.SessionQuestion"
+                                                "$ref": "#/definitions/models.SessionQuestion"
                                             }
                                         }
                                     }
@@ -1542,13 +1542,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.SessionQuestion"
+                                            "$ref": "#/definitions/models.SessionQuestion"
                                         }
                                     }
                                 }
@@ -1594,7 +1594,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.SessionQuestionUpdate"
+                            "$ref": "#/definitions/requests.SessionQuestionUpdate"
                         }
                     }
                 ],
@@ -1604,13 +1604,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.SessionQuestion"
+                                            "$ref": "#/definitions/models.SessionQuestion"
                                         }
                                     }
                                 }
@@ -1686,7 +1686,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.list"
+                                    "$ref": "#/definitions/responses.list"
                                 },
                                 {
                                     "type": "object",
@@ -1694,7 +1694,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.User"
+                                                "$ref": "#/definitions/models.User"
                                             }
                                         },
                                         "pagination": {
@@ -1725,7 +1725,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.UserCreate"
+                            "$ref": "#/definitions/requests.UserCreate"
                         }
                     }
                 ],
@@ -1735,13 +1735,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.User"
+                                            "$ref": "#/definitions/models.User"
                                         }
                                     }
                                 }
@@ -1780,13 +1780,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.User"
+                                            "$ref": "#/definitions/models.User"
                                         }
                                     }
                                 }
@@ -1850,7 +1850,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.UserUpdate"
+                            "$ref": "#/definitions/requests.UserUpdate"
                         }
                     }
                 ],
@@ -1860,13 +1860,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.User"
+                                            "$ref": "#/definitions/models.User"
                                         }
                                     }
                                 }
@@ -1909,13 +1909,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.User"
+                                            "$ref": "#/definitions/models.User"
                                         }
                                     }
                                 }
@@ -1956,13 +1956,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.User"
+                                            "$ref": "#/definitions/models.User"
                                         }
                                     }
                                 }
@@ -1974,7 +1974,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "def.GradeName": {
+        "constants.GradeName": {
             "type": "string",
             "enum": [
                 "junior",
@@ -2012,7 +2012,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Category": {
+        "models.Category": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -2035,7 +2035,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Permission": {
+        "models.Permission": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -2055,7 +2055,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Question": {
+        "models.Question": {
             "type": "object",
             "properties": {
                 "category_id": {
@@ -2065,7 +2065,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "grade": {
-                    "$ref": "#/definitions/def.GradeName"
+                    "$ref": "#/definitions/constants.GradeName"
                 },
                 "id": {
                     "type": "string"
@@ -2078,7 +2078,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Role": {
+        "models.Role": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -2104,7 +2104,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Session": {
+        "models.Session": {
             "type": "object",
             "properties": {
                 "category_id": {
@@ -2117,7 +2117,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "grade": {
-                    "$ref": "#/definitions/def.GradeName"
+                    "$ref": "#/definitions/constants.GradeName"
                 },
                 "id": {
                     "type": "string"
@@ -2130,7 +2130,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.SessionQuestion": {
+        "models.SessionQuestion": {
             "type": "object",
             "properties": {
                 "answer": {
@@ -2156,7 +2156,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.User": {
+        "models.User": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -2185,7 +2185,7 @@ const docTemplate = `{
                 }
             }
         },
-        "request.CategoryCreate": {
+        "requests.CategoryCreate": {
             "type": "object",
             "required": [
                 "description",
@@ -2204,7 +2204,7 @@ const docTemplate = `{
                 }
             }
         },
-        "request.CategoryUpdate": {
+        "requests.CategoryUpdate": {
             "type": "object",
             "required": [
                 "description",
@@ -2223,7 +2223,7 @@ const docTemplate = `{
                 }
             }
         },
-        "request.GoogleLogin": {
+        "requests.GoogleLogin": {
             "type": "object",
             "required": [
                 "token_id"
@@ -2234,7 +2234,7 @@ const docTemplate = `{
                 }
             }
         },
-        "request.Login": {
+        "requests.Login": {
             "type": "object",
             "required": [
                 "email",
@@ -2252,7 +2252,7 @@ const docTemplate = `{
                 }
             }
         },
-        "request.QuestionCreate": {
+        "requests.QuestionCreate": {
             "type": "object",
             "required": [
                 "category_id",
@@ -2278,7 +2278,7 @@ const docTemplate = `{
                 }
             }
         },
-        "request.QuestionUpdate": {
+        "requests.QuestionUpdate": {
             "type": "object",
             "required": [
                 "grade",
@@ -2300,7 +2300,7 @@ const docTemplate = `{
                 }
             }
         },
-        "request.Refresh": {
+        "requests.Refresh": {
             "type": "object",
             "required": [
                 "access_token",
@@ -2315,7 +2315,7 @@ const docTemplate = `{
                 }
             }
         },
-        "request.RoleCreate": {
+        "requests.RoleCreate": {
             "type": "object",
             "required": [
                 "name"
@@ -2328,7 +2328,7 @@ const docTemplate = `{
                 }
             }
         },
-        "request.RoleUpdate": {
+        "requests.RoleUpdate": {
             "type": "object",
             "required": [
                 "name"
@@ -2341,7 +2341,7 @@ const docTemplate = `{
                 }
             }
         },
-        "request.SessionCreate": {
+        "requests.SessionCreate": {
             "type": "object",
             "required": [
                 "category_id",
@@ -2361,7 +2361,7 @@ const docTemplate = `{
                 }
             }
         },
-        "request.SessionQuestionUpdate": {
+        "requests.SessionQuestionUpdate": {
             "type": "object",
             "required": [
                 "answer"
@@ -2374,7 +2374,7 @@ const docTemplate = `{
                 }
             }
         },
-        "request.UserCreate": {
+        "requests.UserCreate": {
             "type": "object",
             "required": [
                 "email",
@@ -2397,7 +2397,7 @@ const docTemplate = `{
                 }
             }
         },
-        "request.UserUpdate": {
+        "requests.UserUpdate": {
             "type": "object",
             "required": [
                 "name"
@@ -2409,14 +2409,14 @@ const docTemplate = `{
                 }
             }
         },
-        "response.list": {
+        "responses.list": {
             "type": "object",
             "properties": {
                 "data": {},
                 "pagination": {}
             }
         },
-        "response.success": {
+        "responses.success": {
             "type": "object",
             "properties": {
                 "data": {}

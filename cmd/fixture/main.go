@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"tech_check/internal/config"
-	"tech_check/internal/def"
-	"tech_check/internal/model"
-	"tech_check/internal/repo/mongo_repo"
-	"tech_check/internal/util"
+	"tech_check/internal/constants"
+	"tech_check/internal/models"
+	"tech_check/internal/repositories/mongo_repositories"
+	"tech_check/internal/utils"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,7 +20,7 @@ func main() {
 		panic(err)
 	}
 
-	mng, err := util.NewMongo(cfg.Mongo.DB, cfg.Mongo.URL)
+	mng, err := utils.NewMongo(cfg.Mongo.DB, cfg.Mongo.URL)
 	if err != nil {
 		panic(err)
 	}
@@ -28,8 +28,8 @@ func main() {
 	ctx := context.TODO()
 	dropDB(ctx, mng)
 
-	categoryRepo := mongo_repo.NewCategory(mng)
-	questionRepo := mongo_repo.NewQuestion(mng)
+	categoryRepo := mongo_repositories.NewCategory(mng)
+	questionRepo := mongo_repositories.NewQuestion(mng)
 	for _, category := range getAllCategories() {
 		err = categoryRepo.Create(ctx, &category)
 		if err != nil {
@@ -37,9 +37,9 @@ func main() {
 		}
 
 		for i := 0; i < 10; i++ {
-			question := model.Question{
-				Text: fmt.Sprintf("%s category test question %d", category.Name, i),
-				Grade: def.GradeJunior,
+			question := models.Question{
+				Text:       fmt.Sprintf("%s category test question %d", category.Name, i),
+				Grade:      constants.GradeJunior,
 				CategoryID: category.ID,
 			}
 			err = questionRepo.Create(ctx, &question)
@@ -50,7 +50,7 @@ func main() {
 	}
 
 	var permissionIDs []primitive.ObjectID
-	permissionRepo := mongo_repo.NewPermission(mng)
+	permissionRepo := mongo_repositories.NewPermission(mng)
 	for _, permission := range getAllPermissions() {
 		err = permissionRepo.Create(ctx, &permission)
 		if err != nil {
@@ -59,14 +59,14 @@ func main() {
 		permissionIDs = append(permissionIDs, permission.ID)
 	}
 
-	roleRepo := mongo_repo.NewRole(mng)
+	roleRepo := mongo_repositories.NewRole(mng)
 	role := getRole(permissionIDs)
 	err = roleRepo.Create(ctx, role)
 	if err != nil {
 		panic(err)
 	}
 
-	userRepo := mongo_repo.NewUser(mng)
+	userRepo := mongo_repositories.NewUser(mng)
 	adminUser := getAdminUser(role.ID)
 	err = userRepo.Create(ctx, adminUser)
 	if err != nil {
@@ -94,26 +94,26 @@ func dropDB(ctx context.Context, db *mongo.Database) {
 	}
 }
 
-func getDefaultUser() *model.User {
+func getDefaultUser() *models.User {
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.DefaultCost)
 	if err != nil {
 		panic(err)
 	}
 
-	return &model.User{
+	return &models.User{
 		Email:    "default@test.com",
 		Name:     "default",
 		Password: string(passwordHash),
 	}
 }
 
-func getAdminUser(roleID primitive.ObjectID) *model.User {
+func getAdminUser(roleID primitive.ObjectID) *models.User {
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.DefaultCost)
 	if err != nil {
 		panic(err)
 	}
 
-	return &model.User{
+	return &models.User{
 		Email:    "admin@test.com",
 		Name:     "admin",
 		Password: string(passwordHash),
@@ -121,16 +121,16 @@ func getAdminUser(roleID primitive.ObjectID) *model.User {
 	}
 }
 
-func getRole(permissionIDs []primitive.ObjectID) *model.Role {
-	return &model.Role{
+func getRole(permissionIDs []primitive.ObjectID) *models.Role {
+	return &models.Role{
 		Name:          "Admin",
 		Slug:          "admin",
 		PermissionIDs: permissionIDs,
 	}
 }
 
-func getAllPermissions() []model.Permission {
-	return []model.Permission{
+func getAllPermissions() []models.Permission {
+	return []models.Permission{
 		{Name: "Category read", Slug: "category-read"},
 		{Name: "Category create", Slug: "category-create"},
 		{Name: "Category edit", Slug: "category-edit"},
@@ -158,8 +158,8 @@ func getAllPermissions() []model.Permission {
 	}
 }
 
-func getAllCategories() []model.Category {
-	return []model.Category{
+func getAllCategories() []models.Category {
+	return []models.Category{
 		{Name: "sql", Slug: "sql", Description: "checking technical sql skills"},
 		{Name: "golang", Slug: "golang", Description: "checking technical Go skills"},
 		{Name: "php", Slug: "php", Description: "checking technical PHP skills"},

@@ -3,9 +3,9 @@ package app
 import (
 	"log/slog"
 	"tech_check/internal/config"
-	"tech_check/internal/repo/mongo_repo"
-	"tech_check/internal/srvc"
-	"tech_check/internal/util"
+	"tech_check/internal/repositories/mongo_repositories"
+	"tech_check/internal/services"
+	"tech_check/internal/utils"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -19,26 +19,26 @@ type (
 	}
 
 	repos struct {
-		User            *mongo_repo.User
-		Role            *mongo_repo.Role
-		Permission      *mongo_repo.Permission
-		RefreshToken    *mongo_repo.RefreshToken
-		Category        *mongo_repo.Category
-		Question        *mongo_repo.Question
-		Session         *mongo_repo.Session
-		SessionQuestion *mongo_repo.SessionQuestion
+		User            *mongo_repositories.User
+		Role            *mongo_repositories.Role
+		Permission      *mongo_repositories.Permission
+		RefreshToken    *mongo_repositories.RefreshToken
+		Category        *mongo_repositories.Category
+		Question        *mongo_repositories.Question
+		Session         *mongo_repositories.Session
+		SessionQuestion *mongo_repositories.SessionQuestion
 	}
 
 	srvcs struct {
-		User            *srvc.User
-		Role            *srvc.Role
-		Permission      *srvc.Permission
-		RefreshToken    *srvc.RefreshToken
-		Auth            *srvc.Auth
-		Category        *srvc.Category
-		Question        *srvc.Question
-		Session         *srvc.Session
-		SessionQuestion *srvc.SessionQuestion
+		User            *services.User
+		Role            *services.Role
+		Permission      *services.Permission
+		RefreshToken    *services.RefreshToken
+		Auth            *services.Auth
+		Category        *services.Category
+		Question        *services.Question
+		Session         *services.Session
+		SessionQuestion *services.SessionQuestion
 	}
 )
 
@@ -59,14 +59,14 @@ func MustNew() *App {
 }
 
 func setupRepositories(mng *mongo.Database) *repos {
-	user := mongo_repo.NewUser(mng)
-	role := mongo_repo.NewRole(mng)
-	permission := mongo_repo.NewPermission(mng)
-	refreshToken := mongo_repo.NewRefreshToken(mng)
-	category := mongo_repo.NewCategory(mng)
-	question := mongo_repo.NewQuestion(mng)
-	session := mongo_repo.NewSession(mng)
-	sessionQuestion := mongo_repo.NewSessionQuestion(mng)
+	user := mongo_repositories.NewUser(mng)
+	role := mongo_repositories.NewRole(mng)
+	permission := mongo_repositories.NewPermission(mng)
+	refreshToken := mongo_repositories.NewRefreshToken(mng)
+	category := mongo_repositories.NewCategory(mng)
+	question := mongo_repositories.NewQuestion(mng)
+	session := mongo_repositories.NewSession(mng)
+	sessionQuestion := mongo_repositories.NewSessionQuestion(mng)
 
 	return &repos{
 		User:            user,
@@ -81,25 +81,25 @@ func setupRepositories(mng *mongo.Database) *repos {
 }
 
 func setupServices(cfg *config.Config, repos *repos) *srvcs {
-	permission := srvc.NewPermission(repos.Permission)
-	role := srvc.NewRole(repos.Role, permission)
-	user := srvc.NewUser(repos.User, role)
-	refreshToken := srvc.NewRefreshToken(repos.RefreshToken)
-	auth := srvc.NewAuth(cfg.Google.ClientID, cfg.JWT.Secret, user, refreshToken)
-	category := srvc.NewCategory(repos.Category)
-	question := srvc.NewQuestion(repos.Question, category)
-	sessionQuestion := srvc.NewSessionQuestion(repos.SessionQuestion)
-	session := srvc.NewSession(repos.Session, category, question, sessionQuestion)
+	permission := services.NewPermission(repos.Permission)
+	role := services.NewRole(repos.Role, permission)
+	user := services.NewUser(repos.User, role)
+	refreshToken := services.NewRefreshToken(repos.RefreshToken)
+	auth := services.NewAuth(cfg.Google.ClientID, cfg.JWT.Secret, user, refreshToken)
+	category := services.NewCategory(repos.Category)
+	question := services.NewQuestion(repos.Question, category)
+	sessionQuestion := services.NewSessionQuestion(repos.SessionQuestion)
+	session := services.NewSession(repos.Session, category, question, sessionQuestion)
 
 	return &srvcs{
-		User:         user,
-		Role:         role,
-		Permission:   permission,
-		RefreshToken: refreshToken,
-		Auth:         auth,
-		Category:     category,
-		Question:     question,
-		Session:      session,
+		User:            user,
+		Role:            role,
+		Permission:      permission,
+		RefreshToken:    refreshToken,
+		Auth:            auth,
+		Category:        category,
+		Question:        question,
+		Session:         session,
 		SessionQuestion: sessionQuestion,
 	}
 }
@@ -114,13 +114,13 @@ func mustSetupConfig() *config.Config {
 }
 
 func mustSetupLogger(cfg *config.Config) *slog.Logger {
-	lg := util.NewLogger(cfg.Log.Level, cfg.Log.Format)
+	lg := utils.NewLogger(cfg.Log.Level, cfg.Log.Format)
 
 	return lg
 }
 
 func mustSetupMongo(cfg *config.Config) *mongo.Database {
-	mng, err := util.NewMongo(cfg.Mongo.DB, cfg.Mongo.URL)
+	mng, err := utils.NewMongo(cfg.Mongo.DB, cfg.Mongo.URL)
 	if err != nil {
 		panic(err)
 	}

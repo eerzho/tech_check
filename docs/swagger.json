@@ -27,13 +27,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.User"
+                                            "$ref": "#/definitions/models.User"
                                         }
                                     }
                                 }
@@ -60,7 +60,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.Login"
+                            "$ref": "#/definitions/requests.Login"
                         }
                     }
                 ],
@@ -70,7 +70,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
@@ -105,7 +105,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.GoogleLogin"
+                            "$ref": "#/definitions/requests.GoogleLogin"
                         }
                     }
                 ],
@@ -115,7 +115,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
@@ -150,7 +150,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.Refresh"
+                            "$ref": "#/definitions/requests.Refresh"
                         }
                     }
                 ],
@@ -160,7 +160,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
@@ -268,7 +268,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.list"
+                                    "$ref": "#/definitions/responses.list"
                                 },
                                 {
                                     "type": "object",
@@ -276,7 +276,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.Category"
+                                                "$ref": "#/definitions/models.Category"
                                             }
                                         },
                                         "pagination": {
@@ -312,7 +312,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.CategoryCreate"
+                            "$ref": "#/definitions/requests.CategoryCreate"
                         }
                     }
                 ],
@@ -322,13 +322,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Category"
+                                            "$ref": "#/definitions/models.Category"
                                         }
                                     }
                                 }
@@ -367,13 +367,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Category"
+                                            "$ref": "#/definitions/models.Category"
                                         }
                                     }
                                 }
@@ -437,7 +437,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.CategoryUpdate"
+                            "$ref": "#/definitions/requests.CategoryUpdate"
                         }
                     }
                 ],
@@ -447,13 +447,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Category"
+                                            "$ref": "#/definitions/models.Category"
                                         }
                                     }
                                 }
@@ -549,7 +549,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.list"
+                                    "$ref": "#/definitions/responses.list"
                                 },
                                 {
                                     "type": "object",
@@ -557,7 +557,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.Permission"
+                                                "$ref": "#/definitions/models.Permission"
                                             }
                                         },
                                         "pagination": {
@@ -600,13 +600,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Permission"
+                                            "$ref": "#/definitions/models.Permission"
                                         }
                                     }
                                 }
@@ -687,7 +687,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.list"
+                                    "$ref": "#/definitions/responses.list"
                                 },
                                 {
                                     "type": "object",
@@ -695,7 +695,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.Question"
+                                                "$ref": "#/definitions/models.Question"
                                             }
                                         },
                                         "pagination": {
@@ -731,7 +731,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.QuestionCreate"
+                            "$ref": "#/definitions/requests.QuestionCreate"
                         }
                     }
                 ],
@@ -741,13 +741,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Question"
+                                            "$ref": "#/definitions/models.Question"
                                         }
                                     }
                                 }
@@ -786,13 +786,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Question"
+                                            "$ref": "#/definitions/models.Question"
                                         }
                                     }
                                 }
@@ -856,7 +856,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.QuestionUpdate"
+                            "$ref": "#/definitions/requests.QuestionUpdate"
                         }
                     }
                 ],
@@ -866,13 +866,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Question"
+                                            "$ref": "#/definitions/models.Question"
                                         }
                                     }
                                 }
@@ -968,7 +968,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.list"
+                                    "$ref": "#/definitions/responses.list"
                                 },
                                 {
                                     "type": "object",
@@ -976,7 +976,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.Role"
+                                                "$ref": "#/definitions/models.Role"
                                             }
                                         },
                                         "pagination": {
@@ -1012,7 +1012,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.RoleCreate"
+                            "$ref": "#/definitions/requests.RoleCreate"
                         }
                     }
                 ],
@@ -1022,13 +1022,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Role"
+                                            "$ref": "#/definitions/models.Role"
                                         }
                                     }
                                 }
@@ -1067,13 +1067,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Role"
+                                            "$ref": "#/definitions/models.Role"
                                         }
                                     }
                                 }
@@ -1137,7 +1137,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.RoleUpdate"
+                            "$ref": "#/definitions/requests.RoleUpdate"
                         }
                     }
                 ],
@@ -1147,13 +1147,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Role"
+                                            "$ref": "#/definitions/models.Role"
                                         }
                                     }
                                 }
@@ -1196,13 +1196,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Role"
+                                            "$ref": "#/definitions/models.Role"
                                         }
                                     }
                                 }
@@ -1243,13 +1243,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Role"
+                                            "$ref": "#/definitions/models.Role"
                                         }
                                     }
                                 }
@@ -1293,7 +1293,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.list"
+                                    "$ref": "#/definitions/responses.list"
                                 },
                                 {
                                     "type": "object",
@@ -1301,7 +1301,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.Session"
+                                                "$ref": "#/definitions/models.Session"
                                             }
                                         },
                                         "pagination": {
@@ -1334,7 +1334,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.SessionCreate"
+                            "$ref": "#/definitions/requests.SessionCreate"
                         }
                     }
                 ],
@@ -1344,13 +1344,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Session"
+                                            "$ref": "#/definitions/models.Session"
                                         }
                                     }
                                 }
@@ -1389,13 +1389,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Session"
+                                            "$ref": "#/definitions/models.Session"
                                         }
                                     }
                                 }
@@ -1434,13 +1434,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Session"
+                                            "$ref": "#/definitions/models.Session"
                                         }
                                     }
                                 }
@@ -1479,7 +1479,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
@@ -1487,7 +1487,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.SessionQuestion"
+                                                "$ref": "#/definitions/models.SessionQuestion"
                                             }
                                         }
                                     }
@@ -1534,13 +1534,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.SessionQuestion"
+                                            "$ref": "#/definitions/models.SessionQuestion"
                                         }
                                     }
                                 }
@@ -1586,7 +1586,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.SessionQuestionUpdate"
+                            "$ref": "#/definitions/requests.SessionQuestionUpdate"
                         }
                     }
                 ],
@@ -1596,13 +1596,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.SessionQuestion"
+                                            "$ref": "#/definitions/models.SessionQuestion"
                                         }
                                     }
                                 }
@@ -1678,7 +1678,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.list"
+                                    "$ref": "#/definitions/responses.list"
                                 },
                                 {
                                     "type": "object",
@@ -1686,7 +1686,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.User"
+                                                "$ref": "#/definitions/models.User"
                                             }
                                         },
                                         "pagination": {
@@ -1717,7 +1717,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.UserCreate"
+                            "$ref": "#/definitions/requests.UserCreate"
                         }
                     }
                 ],
@@ -1727,13 +1727,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.User"
+                                            "$ref": "#/definitions/models.User"
                                         }
                                     }
                                 }
@@ -1772,13 +1772,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.User"
+                                            "$ref": "#/definitions/models.User"
                                         }
                                     }
                                 }
@@ -1842,7 +1842,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.UserUpdate"
+                            "$ref": "#/definitions/requests.UserUpdate"
                         }
                     }
                 ],
@@ -1852,13 +1852,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.User"
+                                            "$ref": "#/definitions/models.User"
                                         }
                                     }
                                 }
@@ -1901,13 +1901,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.User"
+                                            "$ref": "#/definitions/models.User"
                                         }
                                     }
                                 }
@@ -1948,13 +1948,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.success"
+                                    "$ref": "#/definitions/responses.success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.User"
+                                            "$ref": "#/definitions/models.User"
                                         }
                                     }
                                 }
@@ -1966,7 +1966,7 @@
         }
     },
     "definitions": {
-        "def.GradeName": {
+        "constants.GradeName": {
             "type": "string",
             "enum": [
                 "junior",
@@ -2004,7 +2004,7 @@
                 }
             }
         },
-        "model.Category": {
+        "models.Category": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -2027,7 +2027,7 @@
                 }
             }
         },
-        "model.Permission": {
+        "models.Permission": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -2047,7 +2047,7 @@
                 }
             }
         },
-        "model.Question": {
+        "models.Question": {
             "type": "object",
             "properties": {
                 "category_id": {
@@ -2057,7 +2057,7 @@
                     "type": "string"
                 },
                 "grade": {
-                    "$ref": "#/definitions/def.GradeName"
+                    "$ref": "#/definitions/constants.GradeName"
                 },
                 "id": {
                     "type": "string"
@@ -2070,7 +2070,7 @@
                 }
             }
         },
-        "model.Role": {
+        "models.Role": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -2096,7 +2096,7 @@
                 }
             }
         },
-        "model.Session": {
+        "models.Session": {
             "type": "object",
             "properties": {
                 "category_id": {
@@ -2109,7 +2109,7 @@
                     "type": "string"
                 },
                 "grade": {
-                    "$ref": "#/definitions/def.GradeName"
+                    "$ref": "#/definitions/constants.GradeName"
                 },
                 "id": {
                     "type": "string"
@@ -2122,7 +2122,7 @@
                 }
             }
         },
-        "model.SessionQuestion": {
+        "models.SessionQuestion": {
             "type": "object",
             "properties": {
                 "answer": {
@@ -2148,7 +2148,7 @@
                 }
             }
         },
-        "model.User": {
+        "models.User": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -2177,7 +2177,7 @@
                 }
             }
         },
-        "request.CategoryCreate": {
+        "requests.CategoryCreate": {
             "type": "object",
             "required": [
                 "description",
@@ -2196,7 +2196,7 @@
                 }
             }
         },
-        "request.CategoryUpdate": {
+        "requests.CategoryUpdate": {
             "type": "object",
             "required": [
                 "description",
@@ -2215,7 +2215,7 @@
                 }
             }
         },
-        "request.GoogleLogin": {
+        "requests.GoogleLogin": {
             "type": "object",
             "required": [
                 "token_id"
@@ -2226,7 +2226,7 @@
                 }
             }
         },
-        "request.Login": {
+        "requests.Login": {
             "type": "object",
             "required": [
                 "email",
@@ -2244,7 +2244,7 @@
                 }
             }
         },
-        "request.QuestionCreate": {
+        "requests.QuestionCreate": {
             "type": "object",
             "required": [
                 "category_id",
@@ -2270,7 +2270,7 @@
                 }
             }
         },
-        "request.QuestionUpdate": {
+        "requests.QuestionUpdate": {
             "type": "object",
             "required": [
                 "grade",
@@ -2292,7 +2292,7 @@
                 }
             }
         },
-        "request.Refresh": {
+        "requests.Refresh": {
             "type": "object",
             "required": [
                 "access_token",
@@ -2307,7 +2307,7 @@
                 }
             }
         },
-        "request.RoleCreate": {
+        "requests.RoleCreate": {
             "type": "object",
             "required": [
                 "name"
@@ -2320,7 +2320,7 @@
                 }
             }
         },
-        "request.RoleUpdate": {
+        "requests.RoleUpdate": {
             "type": "object",
             "required": [
                 "name"
@@ -2333,7 +2333,7 @@
                 }
             }
         },
-        "request.SessionCreate": {
+        "requests.SessionCreate": {
             "type": "object",
             "required": [
                 "category_id",
@@ -2353,7 +2353,7 @@
                 }
             }
         },
-        "request.SessionQuestionUpdate": {
+        "requests.SessionQuestionUpdate": {
             "type": "object",
             "required": [
                 "answer"
@@ -2366,7 +2366,7 @@
                 }
             }
         },
-        "request.UserCreate": {
+        "requests.UserCreate": {
             "type": "object",
             "required": [
                 "email",
@@ -2389,7 +2389,7 @@
                 }
             }
         },
-        "request.UserUpdate": {
+        "requests.UserUpdate": {
             "type": "object",
             "required": [
                 "name"
@@ -2401,14 +2401,14 @@
                 }
             }
         },
-        "response.list": {
+        "responses.list": {
             "type": "object",
             "properties": {
                 "data": {},
                 "pagination": {}
             }
         },
-        "response.success": {
+        "responses.success": {
             "type": "object",
             "properties": {
                 "data": {}

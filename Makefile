@@ -37,7 +37,7 @@ else
 endif
 
 swagger:
-	docker compose exec http swag init -g ./internal/handler/handler.go
+	docker compose exec http swag init -g ./internal/handlers/handler.go
 
 fixture: 
 	docker compose exec http go run ./cmd/fixture
