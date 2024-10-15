@@ -52,7 +52,7 @@ func (a *Auth) MwrFunc(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		user, err := a.userSrvc.GetByID(r.Context(), claims.UserID.Hex())
+		user, err := a.userSrvc.GetByID(r.Context(), claims.UserID)
 		if err != nil {
 			if errors.Is(err, def.ErrNotFound) {
 				response.JsonFail(w, r, fmt.Errorf("%s: %w", op, def.ErrCannotLogin))

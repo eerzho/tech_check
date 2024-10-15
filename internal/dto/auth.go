@@ -1,8 +1,10 @@
 package dto
 
 import (
+	"tech_check/internal/model"
+	"time"
+
 	"github.com/golang-jwt/jwt/v5"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type (
@@ -12,9 +14,33 @@ type (
 	}
 
 	Claims struct {
-		IP             string             `json:"ip"`
-		UserID         primitive.ObjectID `json:"user_id"`
-		RefreshTokenID primitive.ObjectID `json:"refresh_token_id"`
+		IP             string `json:"ip"`
+		UserID         string `json:"user_id"`
+		RefreshTokenID string `json:"refresh_token_id"`
 		jwt.RegisteredClaims
 	}
 )
+
+func NewToken(aToken, rToken string) *Token {
+	return &Token{
+		AToken: aToken,
+		RToken: rToken,
+	}
+}
+
+func NewClaims(
+	user *model.User,
+	refreshToken *model.RefreshToken,
+	ip string,
+	aTokenExpiresHour int,
+) *Claims {
+	return &Claims{
+		IP:             ip,
+		UserID:         user.ID.Hex(),
+		RefreshTokenID: refreshToken.ID.Hex(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(aTokenExpiresHour) * time.Hour)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
+	}
+}

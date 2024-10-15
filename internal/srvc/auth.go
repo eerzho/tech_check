@@ -27,7 +27,12 @@ type Auth struct {
 	refreshTokenSrvc  RefreshTokenSrvc
 }
 
-func NewAuth(googleClientID, jwtSecret string, userSrvc UserSrvc, refreshTokenSrvc RefreshTokenSrvc) *Auth {
+func NewAuth(
+	googleClientID string,
+	jwtSecret string,
+	userSrvc UserSrvc,
+	refreshTokenSrvc RefreshTokenSrvc,
+) *Auth {
 	return &Auth{
 		rTokenExpiresHour: 24,
 		aTokenExpiresHour: 2,
@@ -113,7 +118,7 @@ func (a *Auth) Refresh(ctx context.Context, aToken, rToken, ip string) (*dto.Tok
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	user, err := a.userSrvc.GetByID(ctx, claims.UserID.Hex())
+	user, err := a.userSrvc.GetByID(ctx, claims.UserID)
 	if err != nil {
 		if errors.Is(err, def.ErrNotFound) {
 			return nil, fmt.Errorf("%s: %w", op, def.ErrCannotLogin)
@@ -126,7 +131,7 @@ func (a *Auth) Refresh(ctx context.Context, aToken, rToken, ip string) (*dto.Tok
 		log.Printf("sending email to %s", user.Email)
 	}
 
-	err = a.validateRToken(ctx, user, claims.RefreshTokenID.Hex(), rToken)
+	err = a.validateRToken(ctx, user, claims.RefreshTokenID, rToken)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -161,8 +166,8 @@ func (a *Auth) validateCredential(ctx context.Context, email, password string) (
 	return user, nil
 }
 
-func (a *Auth) createRTokenByUser(ctx context.Context, user *model.User, ip string) (*model.RefreshToken, string, error) {
-	const op = "srvc.Auth.createRTokenByUser"
+func (a *Auth) createRToken(ctx context.Context, user *model.User, ip string) (*model.RefreshToken, string, error) {
+	const op = "srvc.Auth.createRToken"
 
 	err := a.refreshTokenSrvc.DeleteByUser(ctx, user)
 	if err != nil && !errors.Is(err, def.ErrNotFound) {
@@ -198,16 +203,7 @@ func (a *Auth) createRTokenByUser(ctx context.Context, user *model.User, ip stri
 func (a *Auth) generateAToken(user *model.User, refreshToken *model.RefreshToken, ip string) (string, error) {
 	const op = "srvc.Auth.generateAToken"
 
-	claims := dto.Claims{
-		IP:             ip,
-		UserID:         user.ID,
-		RefreshTokenID: refreshToken.ID,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(a.aTokenExpiresHour) * time.Hour)),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-		},
-	}
-
+	claims := dto.NewClaims(user, refreshToken, ip, a.aTokenExpiresHour)
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS512, claims).SignedString(a.jwtSecret)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", op, err)
@@ -256,7 +252,7 @@ func (a *Auth) validateRToken(ctx context.Context, user *model.User, refreshToke
 func (a *Auth) createToken(ctx context.Context, user *model.User, ip string) (*dto.Token, error) {
 	const op = "srvc.Auth.createToken"
 
-	refreshToken, rToken, err := a.createRTokenByUser(ctx, user, ip)
+	refreshToken, rToken, err := a.createRToken(ctx, user, ip)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
