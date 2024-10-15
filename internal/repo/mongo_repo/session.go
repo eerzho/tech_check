@@ -109,13 +109,9 @@ func (s *Session) List(ctx context.Context, user *model.User, page, count int) (
 		return nil, nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	pagination := dto.Pagination{
-		Page:  page,
-		Count: count,
-		Total: int(total),
-	}
+	pagination := dto.NewPagination(page, count, int(total))
 
-	return sessions, &pagination, nil
+	return sessions, pagination, nil
 }
 
 func (s *Session) Update(ctx context.Context, session *model.Session) error {

@@ -79,13 +79,9 @@ func (c *Category) List(ctx context.Context, page, count int, filters, sorts map
 		return nil, nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	pagination := dto.Pagination{
-		Page:  page,
-		Count: count,
-		Total: int(total),
-	}
+	pagination := dto.NewPagination(page, count, int(total))
 
-	return categories, &pagination, nil
+	return categories, pagination, nil
 }
 
 func (c *Category) Create(ctx context.Context, category *model.Category) error {

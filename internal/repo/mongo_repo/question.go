@@ -80,13 +80,9 @@ func (q *Question) List(ctx context.Context, page, count int, filters, sorts map
 		return nil, nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	pagination := dto.Pagination{
-		Page:  page,
-		Count: count,
-		Total: int(total),
-	}
+	pagination := dto.NewPagination(page, count, int(total))
 
-	return questions, &pagination, nil
+	return questions, pagination, nil
 }
 
 func (q *Question) Create(ctx context.Context, question *model.Question) error {

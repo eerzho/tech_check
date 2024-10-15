@@ -79,13 +79,9 @@ func (p *Permission) List(ctx context.Context, page, count int, filters, sorts m
 		return nil, nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	pagination := dto.Pagination{
-		Page:  page,
-		Count: count,
-		Total: int(total),
-	}
+	pagination := dto.NewPagination(page, count, int(total))
 
-	return permissions, &pagination, nil
+	return permissions, pagination, nil
 }
 
 func (p *Permission) Create(ctx context.Context, permission *model.Permission) error {

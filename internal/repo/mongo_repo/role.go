@@ -79,13 +79,9 @@ func (r *Role) List(ctx context.Context, page, count int, filters, sorts map[str
 		return nil, nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	pagination := dto.Pagination{
-		Page:  page,
-		Count: count,
-		Total: int(total),
-	}
+	pagination := dto.NewPagination(page, count, int(total))
 
-	return roles, &pagination, nil
+	return roles, pagination, nil
 }
 
 func (r *Role) Create(ctx context.Context, role *model.Role) error {

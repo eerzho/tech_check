@@ -74,13 +74,9 @@ func (u *User) List(ctx context.Context, page, count int, filters, sorts map[str
 		return nil, nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	pagination := dto.Pagination{
-		Page:  page,
-		Count: count,
-		Total: int(total),
-	}
+	pagination := dto.NewPagination(page, count, int(total))
 
-	return users, &pagination, nil
+	return users, pagination, nil
 }
 
 func (u *User) Create(ctx context.Context, user *model.User) error {

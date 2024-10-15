@@ -262,8 +262,7 @@ func (a *Auth) createToken(ctx context.Context, user *model.User, ip string) (*d
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &dto.Token{
-		AToken: aToken,
-		RToken: rToken,
-	}, nil
+	token := dto.NewToken(aToken, rToken)
+
+	return token, nil
 }
