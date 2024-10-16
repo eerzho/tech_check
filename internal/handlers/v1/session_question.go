@@ -9,19 +9,19 @@ import (
 )
 
 type sessionQuestion struct {
-	sessionSrvc         SessionSrvc
-	sessionQuestionSrvc SessionQuestionSrvc
+	sessionService         SessionService
+	sessionQuestionService SessionQuestionService
 }
 
 func newSessionQuestion(
 	mux *http.ServeMux,
 	authMwr *middlewares.Auth,
-	sessionSrvc SessionSrvc,
-	sessionQuestionSrvc SessionQuestionSrvc,
+	sessionService SessionService,
+	sessionQuestionService SessionQuestionService,
 ) {
 	s := sessionQuestion{
-		sessionSrvc:         sessionSrvc,
-		sessionQuestionSrvc: sessionQuestionSrvc,
+		sessionService:         sessionService,
+		sessionQuestionService: sessionQuestionService,
 	}
 
 	mux.HandleFunc(
@@ -57,13 +57,13 @@ func (s *sessionQuestion) list(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sessionID := r.PathValue("sessionID")
-	session, err := s.sessionSrvc.GetByID(r.Context(), user, sessionID)
+	session, err := s.sessionService.GetByID(r.Context(), user, sessionID)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	questions, err := s.sessionQuestionSrvc.List(r.Context(), session)
+	questions, err := s.sessionQuestionService.List(r.Context(), session)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 	}
@@ -89,14 +89,14 @@ func (s *sessionQuestion) show(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sessionID := r.PathValue("sessionID")
-	session, err := s.sessionSrvc.GetByID(r.Context(), user, sessionID)
+	session, err := s.sessionService.GetByID(r.Context(), user, sessionID)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
 	id := r.PathValue("id")
-	question, err := s.sessionQuestionSrvc.GetByID(r.Context(), session, id)
+	question, err := s.sessionQuestionService.GetByID(r.Context(), session, id)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -132,14 +132,14 @@ func (s *sessionQuestion) update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sessionID := r.PathValue("sessionID")
-	session, err := s.sessionSrvc.GetByID(r.Context(), user, sessionID)
+	session, err := s.sessionService.GetByID(r.Context(), user, sessionID)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
 	id := r.PathValue("id")
-	question, err := s.sessionQuestionSrvc.Update(
+	question, err := s.sessionQuestionService.Update(
 		r.Context(),
 		session,
 		id,

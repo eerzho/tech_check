@@ -18,29 +18,29 @@ import (
 )
 
 type Auth struct {
-	rTokenExpiresHour int
-	aTokenExpiresHour int
-	rTokenLength      int
-	googleClientID    string
-	jwtSecret         []byte
-	userSrvc          UserSrvc
-	refreshTokenSrvc  RefreshTokenSrvc
+	rTokenExpiresHour   int
+	aTokenExpiresHour   int
+	rTokenLength        int
+	googleClientID      string
+	jwtSecret           []byte
+	userService         UserService
+	refreshTokenService RefreshTokenService
 }
 
 func NewAuth(
 	googleClientID string,
 	jwtSecret string,
-	userSrvc UserSrvc,
-	refreshTokenSrvc RefreshTokenSrvc,
+	userService UserService,
+	refreshTokenService RefreshTokenService,
 ) *Auth {
 	return &Auth{
-		rTokenExpiresHour: 24,
-		aTokenExpiresHour: 2,
-		rTokenLength:      50,
-		googleClientID:    googleClientID,
-		jwtSecret:         []byte(jwtSecret),
-		userSrvc:          userSrvc,
-		refreshTokenSrvc:  refreshTokenSrvc,
+		rTokenExpiresHour:   24,
+		aTokenExpiresHour:   2,
+		rTokenLength:        50,
+		googleClientID:      googleClientID,
+		jwtSecret:           []byte(jwtSecret),
+		userService:         userService,
+		refreshTokenService: refreshTokenService,
 	}
 }
 
@@ -81,7 +81,7 @@ func (a *Auth) GoogleLogin(ctx context.Context, tokenID, ip string) (*dto.Token,
 		return nil, fmt.Errorf("%s: %w", op, constants.ErrInvalidGoogleData)
 	}
 
-	user, err := a.userSrvc.GetOrCreate(ctx, email, name, avatar)
+	user, err := a.userService.GetOrCreate(ctx, email, name, avatar)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -118,7 +118,7 @@ func (a *Auth) Refresh(ctx context.Context, aToken, rToken, ip string) (*dto.Tok
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	user, err := a.userSrvc.GetByID(ctx, claims.UserID)
+	user, err := a.userService.GetByID(ctx, claims.UserID)
 	if err != nil {
 		if errors.Is(err, constants.ErrNotFound) {
 			return nil, fmt.Errorf("%s: %w", op, constants.ErrCannotLogin)
@@ -147,7 +147,7 @@ func (a *Auth) Refresh(ctx context.Context, aToken, rToken, ip string) (*dto.Tok
 func (a *Auth) validateCredential(ctx context.Context, email, password string) (*models.User, error) {
 	const op = "services.Auth.validateCredential"
 
-	user, err := a.userSrvc.GetByEmail(ctx, email)
+	user, err := a.userService.GetByEmail(ctx, email)
 	if err != nil {
 		if errors.Is(err, constants.ErrNotFound) {
 			return nil, fmt.Errorf("%s: %w", op, constants.ErrInvalidCredentials)
@@ -169,7 +169,7 @@ func (a *Auth) validateCredential(ctx context.Context, email, password string) (
 func (a *Auth) createRToken(ctx context.Context, user *models.User, ip string) (*models.RefreshToken, string, error) {
 	const op = "services.Auth.createRToken"
 
-	err := a.refreshTokenSrvc.Delete(ctx, user)
+	err := a.refreshTokenService.Delete(ctx, user)
 	if err != nil && !errors.Is(err, constants.ErrNotFound) {
 		return nil, "", fmt.Errorf("%s: %w", op, err)
 	}
@@ -186,7 +186,7 @@ func (a *Auth) createRToken(ctx context.Context, user *models.User, ip string) (
 		return nil, "", fmt.Errorf("%s: %w", op, err)
 	}
 
-	refreshToken, err := a.refreshTokenSrvc.Create(
+	refreshToken, err := a.refreshTokenService.Create(
 		ctx,
 		user,
 		ip,
@@ -226,7 +226,7 @@ func (a *Auth) getSigningKey(token *jwt.Token) (interface{}, error) {
 func (a *Auth) validateRToken(ctx context.Context, user *models.User, refreshTokenID, rToken string) error {
 	const op = "services.Auth.validateRToken"
 
-	refreshToken, err := a.refreshTokenSrvc.GetByID(ctx, user, refreshTokenID)
+	refreshToken, err := a.refreshTokenService.GetByID(ctx, user, refreshTokenID)
 	if err != nil {
 		if errors.Is(err, constants.ErrNotFound) {
 			return fmt.Errorf("%s: %w", op, constants.ErrTokensMismatch)

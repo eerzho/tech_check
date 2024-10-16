@@ -8,21 +8,21 @@ import (
 )
 
 type Permission struct {
-	permissionRepo PermissionRepo
+	permissionRepository PermissionRepository
 }
 
 func NewPermission(
-	permissionRepo PermissionRepo,
+	permissionRepository PermissionRepository,
 ) *Permission {
 	return &Permission{
-		permissionRepo: permissionRepo,
+		permissionRepository: permissionRepository,
 	}
 }
 
 func (p *Permission) List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]models.Permission, *dto.Pagination, error) {
 	const op = "services.Permission.List"
 
-	permission, pagination, err := p.permissionRepo.List(ctx, page, count, filters, sorts)
+	permission, pagination, err := p.permissionRepository.List(ctx, page, count, filters, sorts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -33,7 +33,7 @@ func (p *Permission) List(ctx context.Context, page, count int, filters, sorts m
 func (p *Permission) GetByID(ctx context.Context, id string) (*models.Permission, error) {
 	const op = "services.Permission.GetByID"
 
-	permission, err := p.permissionRepo.GetByID(ctx, id)
+	permission, err := p.permissionRepository.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

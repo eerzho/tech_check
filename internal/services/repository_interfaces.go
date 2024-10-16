@@ -8,7 +8,7 @@ import (
 )
 
 type (
-	UserRepo interface {
+	UserRepository interface {
 		Delete(ctx context.Context, id string) error
 		Create(ctx context.Context, user *models.User) error
 		Update(ctx context.Context, user *models.User) error
@@ -19,13 +19,13 @@ type (
 		List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]models.User, *dto.Pagination, error)
 	}
 
-	RefreshTokenRepo interface {
+	RefreshTokenRepository interface {
 		Delete(ctx context.Context, user *models.User) error
 		Create(ctx context.Context, refreshToken *models.RefreshToken) error
 		GetByID(ctx context.Context, user *models.User, id string) (*models.RefreshToken, error)
 	}
 
-	RoleRepo interface {
+	RoleRepository interface {
 		Delete(ctx context.Context, id string) error
 		Create(ctx context.Context, role *models.Role) error
 		Update(ctx context.Context, role *models.Role) error
@@ -34,12 +34,12 @@ type (
 		List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]models.Role, *dto.Pagination, error)
 	}
 
-	PermissionRepo interface {
+	PermissionRepository interface {
 		GetByID(ctx context.Context, id string) (*models.Permission, error)
 		List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]models.Permission, *dto.Pagination, error)
 	}
 
-	CategoryRepo interface {
+	CategoryRepository interface {
 		Delete(ctx context.Context, id string) error
 		CountBySlug(ctx context.Context, slug string) (int, error)
 		Create(ctx context.Context, category *models.Category) error
@@ -48,7 +48,7 @@ type (
 		List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]models.Category, *dto.Pagination, error)
 	}
 
-	QuestionRepo interface {
+	QuestionRepository interface {
 		Delete(ctx context.Context, id string) error
 		Create(ctx context.Context, question *models.Question) error
 		Update(ctx context.Context, question *models.Question) error
@@ -57,7 +57,7 @@ type (
 		List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]models.Question, *dto.Pagination, error)
 	}
 
-	SessionRepo interface {
+	SessionRepository interface {
 		Create(ctx context.Context, session *models.Session) error
 		Update(ctx context.Context, session *models.Session) error
 		GetByID(ctx context.Context, id string) (*models.Session, error)
@@ -65,7 +65,7 @@ type (
 		List(ctx context.Context, user *models.User, page, count int) ([]models.Session, *dto.Pagination, error)
 	}
 
-	SessionQuestionRepo interface {
+	SessionQuestionRepository interface {
 		Create(ctx context.Context, question *models.SessionQuestion) error
 		Update(ctx context.Context, question *models.SessionQuestion) error
 		List(ctx context.Context, session *models.Session) ([]models.SessionQuestion, error)

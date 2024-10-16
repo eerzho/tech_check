@@ -9,16 +9,16 @@ import (
 )
 
 type auth struct {
-	authSrvc AuthSrvc
+	authService AuthService
 }
 
 func newAuth(
 	mux *http.ServeMux,
 	authMwr *middlewares.Auth,
-	authSrvc AuthSrvc,
+	authService AuthService,
 ) {
 	a := auth{
-		authSrvc: authSrvc,
+		authService: authService,
 	}
 
 	mux.HandleFunc(Url(http.MethodPost, "/auth"), a.login)
@@ -44,7 +44,7 @@ func (a *auth) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := a.authSrvc.Login(r.Context(), req.Email, req.Password, requests.GetHeaderIP(r))
+	token, err := a.authService.Login(r.Context(), req.Email, req.Password, requests.GetHeaderIP(r))
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -70,7 +70,7 @@ func (a *auth) googleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := a.authSrvc.GoogleLogin(r.Context(), req.TokenID, requests.GetHeaderIP(r))
+	token, err := a.authService.GoogleLogin(r.Context(), req.TokenID, requests.GetHeaderIP(r))
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -114,7 +114,7 @@ func (a *auth) refresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := a.authSrvc.Refresh(r.Context(), req.AToken, req.RToken, requests.GetHeaderIP(r))
+	token, err := a.authService.Refresh(r.Context(), req.AToken, req.RToken, requests.GetHeaderIP(r))
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return

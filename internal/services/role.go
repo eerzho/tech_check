@@ -10,24 +10,24 @@ import (
 )
 
 type Role struct {
-	roleRepo       RoleRepo
-	permissionSrvc PermissionSrvc
+	roleRepository    RoleRepository
+	permissionService PermissionService
 }
 
 func NewRole(
-	roleRepo RoleRepo,
-	permissionSrvc PermissionSrvc,
+	roleRepository RoleRepository,
+	permissionService PermissionService,
 ) *Role {
 	return &Role{
-		roleRepo:       roleRepo,
-		permissionSrvc: permissionSrvc,
+		roleRepository:    roleRepository,
+		permissionService: permissionService,
 	}
 }
 
 func (r *Role) List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]models.Role, *dto.Pagination, error) {
 	const op = "services.Role.List"
 
-	role, pagination, err := r.roleRepo.List(ctx, page, count, filters, sorts)
+	role, pagination, err := r.roleRepository.List(ctx, page, count, filters, sorts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -39,7 +39,7 @@ func (r *Role) Create(ctx context.Context, name string) (*models.Role, error) {
 	const op = "services.Role.Create"
 
 	slug := slug.Make(name)
-	count, err := r.roleRepo.CountBySlug(ctx, slug)
+	count, err := r.roleRepository.CountBySlug(ctx, slug)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -52,7 +52,7 @@ func (r *Role) Create(ctx context.Context, name string) (*models.Role, error) {
 		Slug: slug,
 	}
 
-	err = r.roleRepo.Create(ctx, &role)
+	err = r.roleRepository.Create(ctx, &role)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -63,7 +63,7 @@ func (r *Role) Create(ctx context.Context, name string) (*models.Role, error) {
 func (r *Role) GetByID(ctx context.Context, id string) (*models.Role, error) {
 	const op = "services.Role.GetByID"
 
-	role, err := r.roleRepo.GetByID(ctx, id)
+	role, err := r.roleRepository.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -74,7 +74,7 @@ func (r *Role) GetByID(ctx context.Context, id string) (*models.Role, error) {
 func (r *Role) Delete(ctx context.Context, id string) error {
 	const op = "services.Role.Delete"
 
-	err := r.roleRepo.Delete(ctx, id)
+	err := r.roleRepository.Delete(ctx, id)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -85,12 +85,12 @@ func (r *Role) Delete(ctx context.Context, id string) error {
 func (r *Role) AddPermission(ctx context.Context, id, permissionID string) (*models.Role, error) {
 	const op = "services.Role.AddPermission"
 
-	role, err := r.roleRepo.GetByID(ctx, id)
+	role, err := r.roleRepository.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	permission, err := r.permissionSrvc.GetByID(ctx, permissionID)
+	permission, err := r.permissionService.GetByID(ctx, permissionID)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -107,7 +107,7 @@ func (r *Role) AddPermission(ctx context.Context, id, permissionID string) (*mod
 	}
 
 	role.PermissionIDs = append(role.PermissionIDs, permission.ID)
-	err = r.roleRepo.Update(ctx, role)
+	err = r.roleRepository.Update(ctx, role)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -118,12 +118,12 @@ func (r *Role) AddPermission(ctx context.Context, id, permissionID string) (*mod
 func (r *Role) RemovePermission(ctx context.Context, id, permissionID string) (*models.Role, error) {
 	const op = "services.Role.RemovePermission"
 
-	role, err := r.roleRepo.GetByID(ctx, id)
+	role, err := r.roleRepository.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	permission, err := r.permissionSrvc.GetByID(ctx, permissionID)
+	permission, err := r.permissionService.GetByID(ctx, permissionID)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -140,7 +140,7 @@ func (r *Role) RemovePermission(ctx context.Context, id, permissionID string) (*
 	}
 
 	role.PermissionIDs = append(role.PermissionIDs[:existsIdx], role.PermissionIDs[existsIdx+1:]...)
-	err = r.roleRepo.Update(ctx, role)
+	err = r.roleRepository.Update(ctx, role)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -151,13 +151,13 @@ func (r *Role) RemovePermission(ctx context.Context, id, permissionID string) (*
 func (r *Role) Update(ctx context.Context, id, name string) (*models.Role, error) {
 	const op = "services.Role.Update"
 
-	role, err := r.roleRepo.GetByID(ctx, id)
+	role, err := r.roleRepository.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	role.Name = name
-	err = r.roleRepo.Update(ctx, role)
+	err = r.roleRepository.Update(ctx, role)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

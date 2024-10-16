@@ -9,17 +9,17 @@ import (
 )
 
 type question struct {
-	questionSrvc QuestionSrvc
+	questionService QuestionService
 }
 
 func newQuestion(
 	mux *http.ServeMux,
 	authMwr *middlewares.Auth,
 	permissionMwr *middlewares.Permission,
-	questionSrvc QuestionSrvc,
+	questionService QuestionService,
 ) {
 	q := question{
-		questionSrvc: questionSrvc,
+		questionService: questionService,
 	}
 
 	mux.HandleFunc(
@@ -64,7 +64,7 @@ func (q *question) list(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.question.list"
 
 	search := requests.GetQuerySearch(r)
-	questions, pagination, err := q.questionSrvc.List(
+	questions, pagination, err := q.questionService.List(
 		r.Context(),
 		search.Pagination.Page,
 		search.Pagination.Count,
@@ -97,7 +97,7 @@ func (q *question) create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	question, err := q.questionSrvc.Create(
+	question, err := q.questionService.Create(
 		r.Context(),
 		req.Text,
 		req.Grade,
@@ -122,7 +122,7 @@ func (q *question) show(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.question.show"
 
 	id := r.PathValue("id")
-	question, err := q.questionSrvc.GetByID(r.Context(), id)
+	question, err := q.questionService.GetByID(r.Context(), id)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -152,7 +152,7 @@ func (q *question) update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	question, err := q.questionSrvc.Update(r.Context(), id, req.Text, req.Grade)
+	question, err := q.questionService.Update(r.Context(), id, req.Text, req.Grade)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -172,7 +172,7 @@ func (q *question) delete(w http.ResponseWriter, r *http.Request) {
 
 	id := r.PathValue("id")
 
-	err := q.questionSrvc.Delete(r.Context(), id)
+	err := q.questionService.Delete(r.Context(), id)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return

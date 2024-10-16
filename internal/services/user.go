@@ -12,24 +12,24 @@ import (
 )
 
 type User struct {
-	userRepo UserRepo
-	roleSrvc RoleSrvc
+	userRepository UserRepository
+	roleService    RoleService
 }
 
 func NewUser(
-	userRepo UserRepo,
-	roleSrvc RoleSrvc,
+	userRepository UserRepository,
+	roleService RoleService,
 ) *User {
 	return &User{
-		userRepo: userRepo,
-		roleSrvc: roleSrvc,
+		userRepository: userRepository,
+		roleService:    roleService,
 	}
 }
 
 func (u *User) List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]models.User, *dto.Pagination, error) {
 	const op = "services.User.List"
 
-	user, pagination, err := u.userRepo.List(ctx, page, count, filters, sorts)
+	user, pagination, err := u.userRepository.List(ctx, page, count, filters, sorts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -40,7 +40,7 @@ func (u *User) List(ctx context.Context, page, count int, filters, sorts map[str
 func (u *User) Create(ctx context.Context, email, name, password string) (*models.User, error) {
 	const op = "services.User.Create"
 
-	exists, err := u.userRepo.ExistsByEmail(ctx, email)
+	exists, err := u.userRepository.ExistsByEmail(ctx, email)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -59,7 +59,7 @@ func (u *User) Create(ctx context.Context, email, name, password string) (*model
 		Password: string(passwordHash),
 	}
 
-	err = u.userRepo.Create(ctx, &user)
+	err = u.userRepository.Create(ctx, &user)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -75,7 +75,7 @@ func (u *User) GetOrCreate(ctx context.Context, email, name, avatar string) (*mo
 		user.Name = name
 		user.Avatar = avatar
 
-		err = u.userRepo.Update(ctx, user)
+		err = u.userRepository.Update(ctx, user)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
@@ -92,7 +92,7 @@ func (u *User) GetOrCreate(ctx context.Context, email, name, avatar string) (*mo
 		Name:   name,
 		Avatar: avatar,
 	}
-	err = u.userRepo.Create(ctx, user)
+	err = u.userRepository.Create(ctx, user)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -103,7 +103,7 @@ func (u *User) GetOrCreate(ctx context.Context, email, name, avatar string) (*mo
 func (u *User) GetByID(ctx context.Context, id string) (*models.User, error) {
 	const op = "services.User.GetByID"
 
-	user, err := u.userRepo.GetByID(ctx, id)
+	user, err := u.userRepository.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -114,13 +114,13 @@ func (u *User) GetByID(ctx context.Context, id string) (*models.User, error) {
 func (u *User) Update(ctx context.Context, id, name string) (*models.User, error) {
 	const op = "services.User.Update"
 
-	user, err := u.userRepo.GetByID(ctx, id)
+	user, err := u.userRepository.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	user.Name = name
-	err = u.userRepo.Update(ctx, user)
+	err = u.userRepository.Update(ctx, user)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -131,7 +131,7 @@ func (u *User) Update(ctx context.Context, id, name string) (*models.User, error
 func (u *User) Delete(ctx context.Context, id string) error {
 	const op = "services.User.Delete"
 
-	err := u.userRepo.Delete(ctx, id)
+	err := u.userRepository.Delete(ctx, id)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -142,7 +142,7 @@ func (u *User) Delete(ctx context.Context, id string) error {
 func (u *User) GetByEmail(ctx context.Context, email string) (*models.User, error) {
 	const op = "services.User.GetByEmail"
 
-	user, err := u.userRepo.GetByEmail(ctx, email)
+	user, err := u.userRepository.GetByEmail(ctx, email)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -153,12 +153,12 @@ func (u *User) GetByEmail(ctx context.Context, email string) (*models.User, erro
 func (u *User) AddRole(ctx context.Context, id, roleID string) (*models.User, error) {
 	const op = "services.User.AddRole"
 
-	user, err := u.userRepo.GetByID(ctx, id)
+	user, err := u.userRepository.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	role, err := u.roleSrvc.GetByID(ctx, roleID)
+	role, err := u.roleService.GetByID(ctx, roleID)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -175,7 +175,7 @@ func (u *User) AddRole(ctx context.Context, id, roleID string) (*models.User, er
 	}
 
 	user.RoleIDs = append(user.RoleIDs, role.ID)
-	err = u.userRepo.Update(ctx, user)
+	err = u.userRepository.Update(ctx, user)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -186,12 +186,12 @@ func (u *User) AddRole(ctx context.Context, id, roleID string) (*models.User, er
 func (u *User) RemoveRole(ctx context.Context, id, roleID string) (*models.User, error) {
 	const op = "services.User.RemoveRole"
 
-	user, err := u.userRepo.GetByID(ctx, id)
+	user, err := u.userRepository.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	role, err := u.roleSrvc.GetByID(ctx, roleID)
+	role, err := u.roleService.GetByID(ctx, roleID)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -208,7 +208,7 @@ func (u *User) RemoveRole(ctx context.Context, id, roleID string) (*models.User,
 	}
 
 	user.RoleIDs = append(user.RoleIDs[:existsIdx], user.RoleIDs[existsIdx+1:]...)
-	err = u.userRepo.Update(ctx, user)
+	err = u.userRepository.Update(ctx, user)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -219,7 +219,7 @@ func (u *User) RemoveRole(ctx context.Context, id, roleID string) (*models.User,
 func (u *User) HasPermission(ctx context.Context, user *models.User, permissionSlug string) (bool, error) {
 	const op = "services.User.HasPermission"
 
-	has, err := u.userRepo.HasPermission(ctx, user, permissionSlug)
+	has, err := u.userRepository.HasPermission(ctx, user, permissionSlug)
 	if err != nil {
 		return false, fmt.Errorf("%s: %w", op, err)
 	}

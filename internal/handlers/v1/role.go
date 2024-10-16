@@ -9,17 +9,17 @@ import (
 )
 
 type role struct {
-	roleSrvc RoleSrvc
+	roleService RoleService
 }
 
 func newRole(
 	mux *http.ServeMux,
 	authMwr *middlewares.Auth,
 	permissionMwr *middlewares.Permission,
-	roleSrvc RoleSrvc,
+	roleService RoleService,
 ) {
 	re := role{
-		roleSrvc: roleSrvc,
+		roleService: roleService,
 	}
 
 	mux.HandleFunc(
@@ -76,7 +76,7 @@ func (re *role) list(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.role.list"
 
 	search := requests.GetQuerySearch(r)
-	roles, pagination, err := re.roleSrvc.List(
+	roles, pagination, err := re.roleService.List(
 		r.Context(),
 		search.Pagination.Page,
 		search.Pagination.Count,
@@ -109,7 +109,7 @@ func (re *role) create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	role, err := re.roleSrvc.Create(r.Context(), req.Name)
+	role, err := re.roleService.Create(r.Context(), req.Name)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -129,7 +129,7 @@ func (re *role) show(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.role.show"
 
 	id := r.PathValue("id")
-	role, err := re.roleSrvc.GetByID(r.Context(), id)
+	role, err := re.roleService.GetByID(r.Context(), id)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -159,7 +159,7 @@ func (re *role) update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	role, err := re.roleSrvc.Update(r.Context(), id, req.Name)
+	role, err := re.roleService.Update(r.Context(), id, req.Name)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -178,7 +178,7 @@ func (re *role) delete(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.role.delete"
 
 	id := r.PathValue("id")
-	err := re.roleSrvc.Delete(r.Context(), id)
+	err := re.roleService.Delete(r.Context(), id)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -199,7 +199,7 @@ func (re *role) addPermission(w http.ResponseWriter, r *http.Request) {
 
 	id := r.PathValue("id")
 	permissionID := r.PathValue("permissionID")
-	role, err := re.roleSrvc.AddPermission(r.Context(), id, permissionID)
+	role, err := re.roleService.AddPermission(r.Context(), id, permissionID)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -220,7 +220,7 @@ func (re *role) removePermission(w http.ResponseWriter, r *http.Request) {
 
 	id := r.PathValue("id")
 	permissionID := r.PathValue("permissionID")
-	role, err := re.roleSrvc.RemovePermission(r.Context(), id, permissionID)
+	role, err := re.roleService.RemovePermission(r.Context(), id, permissionID)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return

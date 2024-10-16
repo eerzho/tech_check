@@ -9,16 +9,16 @@ import (
 )
 
 type session struct {
-	sessionSrvc SessionSrvc
+	sessionService SessionService
 }
 
 func newSession(
 	mux *http.ServeMux,
 	authMwr *middlewares.Auth,
-	sessionSrvc SessionSrvc,
+	sessionService SessionService,
 ) {
 	s := session{
-		sessionSrvc: sessionSrvc,
+		sessionService: sessionService,
 	}
 
 	mux.HandleFunc(
@@ -60,7 +60,7 @@ func (s *session) list(w http.ResponseWriter, r *http.Request) {
 	}
 
 	search := requests.GetQuerySearch(r)
-	sessions, pagination, err := s.sessionSrvc.List(
+	sessions, pagination, err := s.sessionService.List(
 		r.Context(),
 		user,
 		search.Pagination.Page,
@@ -97,7 +97,7 @@ func (s *session) create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := s.sessionSrvc.Create(
+	session, err := s.sessionService.Create(
 		r.Context(),
 		user,
 		req.CategoryID,
@@ -128,7 +128,7 @@ func (s *session) summarize(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id := r.PathValue("id")
-	session, err := s.sessionSrvc.Summarize(r.Context(), user, id)
+	session, err := s.sessionService.Summarize(r.Context(), user, id)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -154,7 +154,7 @@ func (s *session) cancel(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id := r.PathValue("id")
-	session, err := s.sessionSrvc.Cancel(r.Context(), user, id)
+	session, err := s.sessionService.Cancel(r.Context(), user, id)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return

@@ -10,32 +10,32 @@ import (
 )
 
 type Session struct {
-	count               int
-	sessionRepo         SessionRepo
-	categorySrvc        CategorySrvc
-	questionSrvc        QuestionSrvc
-	sessionQuestionSrvc SessionQuestionSrvc
+	count                  int
+	sessionRepository      SessionRepository
+	categoryService        CategoryService
+	questionService        QuestionService
+	sessionQuestionService SessionQuestionService
 }
 
 func NewSession(
-	sessionRepo SessionRepo,
-	categorySrvc CategorySrvc,
-	questionSrvc QuestionSrvc,
-	sessionQuestionSrvc SessionQuestionSrvc,
+	sessionRepository SessionRepository,
+	categoryService CategoryService,
+	questionService QuestionService,
+	sessionQuestionService SessionQuestionService,
 ) *Session {
 	return &Session{
-		count:               10,
-		sessionRepo:         sessionRepo,
-		categorySrvc:        categorySrvc,
-		questionSrvc:        questionSrvc,
-		sessionQuestionSrvc: sessionQuestionSrvc,
+		count:                  10,
+		sessionRepository:      sessionRepository,
+		categoryService:        categoryService,
+		questionService:        questionService,
+		sessionQuestionService: sessionQuestionService,
 	}
 }
 
 func (s *Session) List(ctx context.Context, user *models.User, page, count int) ([]models.Session, *dto.Pagination, error) {
 	const op = "services.Session.List"
 
-	sessions, pagination, err := s.sessionRepo.List(ctx, user, page, count)
+	sessions, pagination, err := s.sessionRepository.List(ctx, user, page, count)
 	if err != nil {
 		return nil, nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -46,7 +46,7 @@ func (s *Session) List(ctx context.Context, user *models.User, page, count int) 
 func (s *Session) Create(ctx context.Context, user *models.User, categoryID, grade string) (*models.Session, error) {
 	const op = "services.Session.Create"
 
-	exists, err := s.sessionRepo.ExistsActive(ctx, user)
+	exists, err := s.sessionRepository.ExistsActive(ctx, user)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -54,12 +54,12 @@ func (s *Session) Create(ctx context.Context, user *models.User, categoryID, gra
 		return nil, fmt.Errorf("%s: %w", op, constants.ErrUserHasActiveSession)
 	}
 
-	category, err := s.categorySrvc.GetByID(ctx, categoryID)
+	category, err := s.categoryService.GetByID(ctx, categoryID)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	questions, err := s.questionSrvc.GetRandom(ctx, category, grade, s.count)
+	questions, err := s.questionService.GetRandom(ctx, category, grade, s.count)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -78,13 +78,13 @@ func (s *Session) Create(ctx context.Context, user *models.User, categoryID, gra
 		CategoryID: category.ID,
 		Grade:      gradeObj,
 	}
-	err = s.sessionRepo.Create(ctx, &session)
+	err = s.sessionRepository.Create(ctx, &session)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	for _, question := range questions {
-		_, err := s.sessionQuestionSrvc.Create(ctx, &session, question.Text)
+		_, err := s.sessionQuestionService.Create(ctx, &session, question.Text)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
@@ -96,7 +96,7 @@ func (s *Session) Create(ctx context.Context, user *models.User, categoryID, gra
 func (s *Session) GetByID(ctx context.Context, user *models.User, id string) (*models.Session, error) {
 	const op = "services.Session.GetByID"
 
-	session, err := s.sessionRepo.GetByID(ctx, id)
+	session, err := s.sessionRepository.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -123,7 +123,7 @@ func (s *Session) Summarize(ctx context.Context, user *models.User, id string) (
 	now := time.Now()
 	session.Summary = "TODO: ai summary"
 	session.FinishedAt = &now
-	err = s.sessionRepo.Update(ctx, session)
+	err = s.sessionRepository.Update(ctx, session)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -141,7 +141,7 @@ func (s *Session) Cancel(ctx context.Context, user *models.User, id string) (*mo
 
 	now := time.Now()
 	session.FinishedAt = &now
-	err = s.sessionRepo.Update(ctx, session)
+	err = s.sessionRepository.Update(ctx, session)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

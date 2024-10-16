@@ -9,17 +9,17 @@ import (
 )
 
 type permission struct {
-	permissionSrvc PermissionSrvc
+	permissionService PermissionService
 }
 
 func newPermission(
 	mux *http.ServeMux,
 	authMwr *middlewares.Auth,
 	permissionMwr *middlewares.Permission,
-	permissionSrvc PermissionSrvc,
+	permissionService PermissionService,
 ) {
 	p := permission{
-		permissionSrvc: permissionSrvc,
+		permissionService: permissionService,
 	}
 
 	mux.HandleFunc(
@@ -51,7 +51,7 @@ func (p *permission) list(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.permission.list"
 
 	search := requests.GetQuerySearch(r)
-	permissions, pagination, err := p.permissionSrvc.List(
+	permissions, pagination, err := p.permissionService.List(
 		r.Context(),
 		search.Pagination.Page,
 		search.Pagination.Count,
@@ -77,7 +77,7 @@ func (p *permission) show(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.permission.show"
 
 	id := r.PathValue("id")
-	permission, err := p.permissionSrvc.GetByID(r.Context(), id)
+	permission, err := p.permissionService.GetByID(r.Context(), id)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return

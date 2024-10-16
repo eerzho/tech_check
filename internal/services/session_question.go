@@ -7,14 +7,14 @@ import (
 )
 
 type SessionQuestion struct {
-	questionRepo SessionQuestionRepo
+	questionRepository SessionQuestionRepository
 }
 
 func NewSessionQuestion(
-	questionRepo SessionQuestionRepo,
+	questionRepository SessionQuestionRepository,
 ) *SessionQuestion {
 	return &SessionQuestion{
-		questionRepo: questionRepo,
+		questionRepository: questionRepository,
 	}
 }
 
@@ -25,7 +25,7 @@ func (s *SessionQuestion) Create(ctx context.Context, session *models.Session, t
 		SessionID: session.ID,
 		Text:      text,
 	}
-	err := s.questionRepo.Create(ctx, &question)
+	err := s.questionRepository.Create(ctx, &question)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -36,7 +36,7 @@ func (s *SessionQuestion) Create(ctx context.Context, session *models.Session, t
 func (s *SessionQuestion) List(ctx context.Context, session *models.Session) ([]models.SessionQuestion, error) {
 	const op = "services.SessionQuestion.List"
 
-	questions, err := s.questionRepo.List(ctx, session)
+	questions, err := s.questionRepository.List(ctx, session)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -47,7 +47,7 @@ func (s *SessionQuestion) List(ctx context.Context, session *models.Session) ([]
 func (s *SessionQuestion) GetByID(ctx context.Context, session *models.Session, id string) (*models.SessionQuestion, error) {
 	const op = "services.SessionQuestion.GetByID"
 
-	question, err := s.questionRepo.GetByID(ctx, session, id)
+	question, err := s.questionRepository.GetByID(ctx, session, id)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -65,7 +65,7 @@ func (s *SessionQuestion) Update(ctx context.Context, session *models.Session, i
 
 	question.Answer = answer
 	question.Summary = "TODO: ai summary"
-	err = s.questionRepo.Update(ctx, question)
+	err = s.questionRepository.Update(ctx, question)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

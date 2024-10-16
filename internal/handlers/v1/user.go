@@ -9,17 +9,17 @@ import (
 )
 
 type user struct {
-	userSrvc UserSrvc
+	userService UserService
 }
 
 func newUser(
 	mux *http.ServeMux,
 	authMwr *middlewares.Auth,
 	permissionMwr *middlewares.Permission,
-	userSrvc UserSrvc,
+	userService UserService,
 ) {
 	u := user{
-		userSrvc: userSrvc,
+		userService: userService,
 	}
 
 	mux.HandleFunc(
@@ -74,7 +74,7 @@ func (u *user) list(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.user.list"
 
 	search := requests.GetQuerySearch(r)
-	users, pagination, err := u.userSrvc.List(
+	users, pagination, err := u.userService.List(
 		r.Context(),
 		search.Pagination.Page,
 		search.Pagination.Count,
@@ -106,7 +106,7 @@ func (u *user) create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := u.userSrvc.Create(
+	user, err := u.userService.Create(
 		r.Context(),
 		req.Email,
 		req.Name,
@@ -131,7 +131,7 @@ func (u *user) show(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.user.show"
 
 	id := r.PathValue("id")
-	user, err := u.userSrvc.GetByID(r.Context(), id)
+	user, err := u.userService.GetByID(r.Context(), id)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -161,7 +161,7 @@ func (u *user) update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := u.userSrvc.Update(r.Context(), id, req.Name)
+	user, err := u.userService.Update(r.Context(), id, req.Name)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -181,7 +181,7 @@ func (u *user) delete(w http.ResponseWriter, r *http.Request) {
 
 	id := r.PathValue("id")
 
-	err := u.userSrvc.Delete(r.Context(), id)
+	err := u.userService.Delete(r.Context(), id)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -202,7 +202,7 @@ func (u *user) addRole(w http.ResponseWriter, r *http.Request) {
 
 	id := r.PathValue("id")
 	roleID := r.PathValue("roleID")
-	user, err := u.userSrvc.AddRole(r.Context(), id, roleID)
+	user, err := u.userService.AddRole(r.Context(), id, roleID)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -223,7 +223,7 @@ func (u *user) removeRole(w http.ResponseWriter, r *http.Request) {
 
 	id := r.PathValue("id")
 	roleID := r.PathValue("roleID")
-	user, err := u.userSrvc.RemoveRole(r.Context(), id, roleID)
+	user, err := u.userService.RemoveRole(r.Context(), id, roleID)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return

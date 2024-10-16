@@ -7,7 +7,7 @@ import (
 )
 
 type (
-	UserSrvc interface {
+	UserService interface {
 		Delete(ctx context.Context, id string) error
 		GetByID(ctx context.Context, id string) (*models.User, error)
 		Update(ctx context.Context, id, name string) (*models.User, error)
@@ -17,14 +17,14 @@ type (
 		List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]models.User, *dto.Pagination, error)
 	}
 
-	AuthSrvc interface {
+	AuthService interface {
 		DecodeAToken(ctx context.Context, aToken string) (*dto.Claims, error)
 		GoogleLogin(ctx context.Context, tokenID, ip string) (*dto.Token, error)
 		Login(ctx context.Context, email, password, ip string) (*dto.Token, error)
 		Refresh(ctx context.Context, aToken, rToken, ip string) (*dto.Token, error)
 	}
 
-	RoleSrvc interface {
+	RoleService interface {
 		Delete(ctx context.Context, id string) error
 		GetByID(ctx context.Context, id string) (*models.Role, error)
 		Create(ctx context.Context, name string) (*models.Role, error)
@@ -34,12 +34,12 @@ type (
 		List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]models.Role, *dto.Pagination, error)
 	}
 
-	PermissionSrvc interface {
+	PermissionService interface {
 		GetByID(ctx context.Context, id string) (*models.Permission, error)
 		List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]models.Permission, *dto.Pagination, error)
 	}
 
-	CategorySrvc interface {
+	CategoryService interface {
 		Delete(ctx context.Context, id string) error
 		GetByID(ctx context.Context, id string) (*models.Category, error)
 		Create(ctx context.Context, name, description string) (*models.Category, error)
@@ -47,7 +47,7 @@ type (
 		List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]models.Category, *dto.Pagination, error)
 	}
 
-	QuestionSrvc interface {
+	QuestionService interface {
 		Delete(ctx context.Context, id string) error
 		GetByID(ctx context.Context, id string) (*models.Question, error)
 		Update(ctx context.Context, id, grade, text string) (*models.Question, error)
@@ -55,7 +55,7 @@ type (
 		List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]models.Question, *dto.Pagination, error)
 	}
 
-	SessionSrvc interface {
+	SessionService interface {
 		Cancel(ctx context.Context, user *models.User, id string) (*models.Session, error)
 		GetByID(ctx context.Context, user *models.User, id string) (*models.Session, error)
 		Summarize(ctx context.Context, user *models.User, id string) (*models.Session, error)
@@ -63,7 +63,7 @@ type (
 		List(ctx context.Context, user *models.User, page, count int) ([]models.Session, *dto.Pagination, error)
 	}
 
-	SessionQuestionSrvc interface {
+	SessionQuestionService interface {
 		List(ctx context.Context, session *models.Session) ([]models.SessionQuestion, error)
 		GetByID(ctx context.Context, session *models.Session, id string) (*models.SessionQuestion, error)
 		Update(ctx context.Context, session *models.Session, id, answer string) (*models.SessionQuestion, error)

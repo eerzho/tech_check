@@ -9,17 +9,17 @@ import (
 )
 
 type category struct {
-	categorySrvc CategorySrvc
+	categoryService CategoryService
 }
 
 func newCategory(
 	mux *http.ServeMux,
 	authMwr *middlewares.Auth,
 	permissionMwr *middlewares.Permission,
-	categorySrvc CategorySrvc,
+	categoryService CategoryService,
 ) {
 	c := category{
-		categorySrvc: categorySrvc,
+		categoryService: categoryService,
 	}
 
 	mux.HandleFunc(
@@ -67,7 +67,7 @@ func (c *category) list(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.category.list"
 
 	search := requests.GetQuerySearch(r)
-	categories, pagination, err := c.categorySrvc.List(
+	categories, pagination, err := c.categoryService.List(
 		r.Context(),
 		search.Pagination.Page,
 		search.Pagination.Count,
@@ -100,7 +100,7 @@ func (c *category) create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	category, err := c.categorySrvc.Create(
+	category, err := c.categoryService.Create(
 		r.Context(),
 		req.Name,
 		req.Description,
@@ -124,7 +124,7 @@ func (c *category) show(w http.ResponseWriter, r *http.Request) {
 	const op = "v1.category.show"
 
 	id := r.PathValue("id")
-	category, err := c.categorySrvc.GetByID(r.Context(), id)
+	category, err := c.categoryService.GetByID(r.Context(), id)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -154,7 +154,7 @@ func (c *category) update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	category, err := c.categorySrvc.Update(r.Context(), id, req.Name, req.Description)
+	category, err := c.categoryService.Update(r.Context(), id, req.Name, req.Description)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -174,7 +174,7 @@ func (c *category) delete(w http.ResponseWriter, r *http.Request) {
 
 	id := r.PathValue("id")
 
-	err := c.categorySrvc.Delete(r.Context(), id)
+	err := c.categoryService.Delete(r.Context(), id)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
