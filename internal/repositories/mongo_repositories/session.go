@@ -55,7 +55,7 @@ func (s *Session) ExistsActive(ctx context.Context, user *models.User) (bool, er
 	return count > 0, nil
 }
 
-func (s *Session) GetByID(ctx context.Context, id string) (*models.Session, error) {
+func (s *Session) GetByID(ctx context.Context, user *models.User, id string) (*models.Session, error) {
 	const op = "mongo_repo.Session.GetByID"
 
 	idObj, err := primitive.ObjectIDFromHex(id)
@@ -63,7 +63,11 @@ func (s *Session) GetByID(ctx context.Context, id string) (*models.Session, erro
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	filter := bson.M{"_id": idObj}
+	filter := bson.M{
+		"_id":         idObj,
+		"user_id":     user.ID,
+		"finished_at": nil,
+	}
 	var session models.Session
 
 	err = s.collection.FindOne(ctx, filter).Decode(&session)

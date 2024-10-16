@@ -64,8 +64,8 @@ type (
 	}
 
 	SessionQuestionService interface {
-		List(ctx context.Context, session *models.Session) ([]models.SessionQuestion, error)
-		GetByID(ctx context.Context, session *models.Session, id string) (*models.SessionQuestion, error)
-		Update(ctx context.Context, session *models.Session, id, answer string) (*models.SessionQuestion, error)
+		List(ctx context.Context, user *models.User, sessionID string) ([]models.SessionQuestion, error)
+		GetByID(ctx context.Context, user *models.User, sessionID, id string) (*models.SessionQuestion, error)
+		Update(ctx context.Context, user *models.User, sessionID, id, answer string) (*models.SessionQuestion, error)
 	}
 )

@@ -9,18 +9,15 @@ import (
 )
 
 type sessionQuestion struct {
-	sessionService         SessionService
 	sessionQuestionService SessionQuestionService
 }
 
 func newSessionQuestion(
 	mux *http.ServeMux,
 	authMwr *middlewares.Auth,
-	sessionService SessionService,
 	sessionQuestionService SessionQuestionService,
 ) {
 	s := sessionQuestion{
-		sessionService:         sessionService,
 		sessionQuestionService: sessionQuestionService,
 	}
 
@@ -57,15 +54,10 @@ func (s *sessionQuestion) list(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sessionID := r.PathValue("sessionID")
-	session, err := s.sessionService.GetByID(r.Context(), user, sessionID)
+	questions, err := s.sessionQuestionService.List(r.Context(), user, sessionID)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
-	}
-
-	questions, err := s.sessionQuestionService.List(r.Context(), session)
-	if err != nil {
-		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 	}
 
 	responses.JsonSuccess(w, r, http.StatusOK, questions)
@@ -88,15 +80,9 @@ func (s *sessionQuestion) show(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sessionID := r.PathValue("sessionID")
-	session, err := s.sessionService.GetByID(r.Context(), user, sessionID)
-	if err != nil {
-		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
-		return
-	}
-
 	id := r.PathValue("id")
-	question, err := s.sessionQuestionService.GetByID(r.Context(), session, id)
+	sessionID := r.PathValue("sessionID")
+	question, err := s.sessionQuestionService.GetByID(r.Context(), user, sessionID, id)
 	if err != nil {
 		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
 		return
@@ -131,17 +117,12 @@ func (s *sessionQuestion) update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sessionID := r.PathValue("sessionID")
-	session, err := s.sessionService.GetByID(r.Context(), user, sessionID)
-	if err != nil {
-		responses.JsonFail(w, r, fmt.Errorf("%s: %w", op, err))
-		return
-	}
-
 	id := r.PathValue("id")
+	sessionID := r.PathValue("sessionID")
 	question, err := s.sessionQuestionService.Update(
 		r.Context(),
-		session,
+		user,
+		sessionID,
 		id,
 		req.Answer,
 	)

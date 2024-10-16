@@ -96,17 +96,9 @@ func (s *Session) Create(ctx context.Context, user *models.User, categoryID, gra
 func (s *Session) GetByID(ctx context.Context, user *models.User, id string) (*models.Session, error) {
 	const op = "services.Session.GetByID"
 
-	session, err := s.sessionRepository.GetByID(ctx, id)
+	session, err := s.sessionRepository.GetByID(ctx, user, id)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	if session.FinishedAt != nil {
-		return nil, fmt.Errorf("%s: %w", op, constants.ErrSessionFinished)
-	}
-
-	if session.UserID != user.ID {
-		return nil, fmt.Errorf("%s: %w", op, constants.ErrAccessDenied)
 	}
 
 	return session, nil

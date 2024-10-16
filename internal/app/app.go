@@ -88,7 +88,7 @@ func setupServices(cfg *config.Config, repos *repos) *srvcs {
 	auth := services.NewAuth(cfg.Google.ClientID, cfg.JWT.Secret, user, refreshToken)
 	category := services.NewCategory(repos.Category)
 	question := services.NewQuestion(repos.Question, category)
-	sessionQuestion := services.NewSessionQuestion(repos.SessionQuestion)
+	sessionQuestion := services.NewSessionQuestion(repos.Session, repos.SessionQuestion)
 	session := services.NewSession(repos.Session, category, question, sessionQuestion)
 
 	return &srvcs{

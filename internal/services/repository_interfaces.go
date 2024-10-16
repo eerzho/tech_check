@@ -53,15 +53,15 @@ type (
 		Create(ctx context.Context, question *models.Question) error
 		Update(ctx context.Context, question *models.Question) error
 		GetByID(ctx context.Context, id string) (*models.Question, error)
-		GetRandom(ctx context.Context, category *models.Category, grade constants.GradeName, count int) ([]models.Question, error)
 		List(ctx context.Context, page, count int, filters, sorts map[string]string) ([]models.Question, *dto.Pagination, error)
+		GetRandom(ctx context.Context, category *models.Category, grade constants.GradeName, count int) ([]models.Question, error)
 	}
 
 	SessionRepository interface {
 		Create(ctx context.Context, session *models.Session) error
 		Update(ctx context.Context, session *models.Session) error
-		GetByID(ctx context.Context, id string) (*models.Session, error)
 		ExistsActive(ctx context.Context, user *models.User) (bool, error)
+		GetByID(ctx context.Context, user *models.User, id string) (*models.Session, error)
 		List(ctx context.Context, user *models.User, page, count int) ([]models.Session, *dto.Pagination, error)
 	}
 
